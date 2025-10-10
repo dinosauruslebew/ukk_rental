@@ -15,8 +15,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/', function () {
-    return view('landingpage');
-})->name('landing');
+    return view('welcome');
+})->name('welcome');
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
