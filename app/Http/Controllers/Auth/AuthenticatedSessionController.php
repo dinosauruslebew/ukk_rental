@@ -29,13 +29,13 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (!auth()->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        if (!Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             return back()->withErrors([
                 'email' => 'Email atau password salah.',
             ]);
         }
 
-        $user = auth()->user();
+        $user = Auth::user();
 
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
