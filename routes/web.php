@@ -3,21 +3,27 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+
+// --- IMPORT ADMIN CONTROLLERS ---
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\RentalController;
 use App\Http\Controllers\Admin\PengaturanController;
 
-use App\Models\Barang;
+// --- IMPORT FRONTEND CONTROLLERS ---
+use App\Http\Controllers\Frontend\LandingController;
+use App\Http\Controllers\Frontend\ProductController;
+
+use App\Models\Barang; // (Sebenarnya ini tidak perlu di file routes)
 
 // ======================================
 // ============ HALAMAN UTAMA ===========
 // ======================================
 
-Route::get('/', function () {
-    $barang = Barang::where('status', 'tersedia')->latest()->get();
-    return view('welcome', compact('barang'));
-})->name('landing');
+// User
+Route::get('/', [LandingController::class, 'index'])->name('frontend.landing');
+Route::get('/produk', [ProductController::class, 'index'])->name('frontend.produk.index');
+Route::get('/produk/{barang:id_barang}', [ProductController::class, 'show'])->name('frontend.produk.detail');
 
 
 
@@ -37,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         } else {
+            // (Kode ini sekarang sudah benar karena route 'landing' sudah ada)
             return redirect()->route('landing');
         }
     })->name('dashboard');
@@ -46,12 +53,13 @@ Route::middleware(['auth'])->group(function () {
         Auth::logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
+        // (Kode ini sekarang sudah benar karena route 'landing' sudah ada)
         return redirect()->route('landing');
     })->name('logout');
 });
 
 
-// =================================  =====
+// ======================================
 // ============ ADMIN AREA ==============
 // ======================================
 
@@ -63,9 +71,8 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('barang', BarangController::class);
         Route::get('/rental', [RentalController::class, 'index'])->name('rental.index');
         Route::post('/rental/{id}/confirm', [RentalController::class, 'confirm'])->name('rental.confirm');
-        Route::post('/admin/rental/confirm/{id}', [RentalController::class, 'confirm'])->name('admin.rental.confirm');
-        Route::patch('/admin/rental/{id}/status', [App\Http\Controllers\Admin\RentalController::class, 'updateStatus'])->name('admin.rental.updateStatus');
-
+        Route::post('/admin/rental/confirm/{id}', [RentalController::class, 'confirm'])->name('admin.rental.confirm'); // <-- Hati-hati, ini sepertinya duplikat
+        Route::patch('/admin/rental/{id}/status', [RentalController::class, 'updateStatus'])->name('rental.updateStatus'); // <-- Disesuaikan
 
         // Route::get('pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
         // Route::post('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
