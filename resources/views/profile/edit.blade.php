@@ -1,29 +1,46 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+    <div class="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-10 mt-14 border border-emerald-100">
+        <h2 class="text-3xl font-bold mb-8 text-emerald-700 text-center">Edit Profile</h2>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
+        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+            @csrf
+            @method('PATCH')
+
+            <!-- foto profil -->
+            <div class="flex flex-col items-center mb-8">
+                <div class="relative">
+                    <img src="{{ auth()->user()->profile_photo ? asset('storage/' . auth()->user()->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) }}"
+                        alt="Profile Photo"
+                        class="h-32 w-32 rounded-full object-cover border-4 border-emerald-400 shadow-md">
+                    <label for="profile_photo" class="absolute bottom-0 right-0 bg-emerald-600 text-white p-2 rounded-full cursor-pointer hover:bg-emerald-700 transition">
+                        <i class="fa-solid fa-camera"></i>
+                    </label>
                 </div>
+                <input type="file" name="profile_photo" id="profile_photo" class="hidden" accept="image/*">
+                <p class="text-gray-500 text-sm mt-2">Klik ikon kamera untuk mengganti foto profil</p>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
+            <!-- name -->
+            <div class="mb-5">
+                <label class="block text-gray-700 mb-2 font-medium">Name</label>
+                <input type="text" name="name" value="{{ old('name', auth()->user()->name) }}"
+                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
             </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
+            <!-- email -->
+            <div class="mb-5">
+                <label class="block text-gray-700 mb-2 font-medium">Email</label>
+                <input type="email" name="email" value="{{ old('email', auth()->user()->email) }}"
+                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
             </div>
-        </div>
+
+            <!-- tombol submit -->
+            <div class="flex justify-center">
+                <button type="submit"
+                    class="bg-emerald-600 text-white px-8 py-2 rounded-full hover:bg-emerald-700 shadow-lg transition">
+                    <i class="fa-solid fa-floppy-disk mr-2"></i> Save Changes
+                </button>
+            </div>
+        </form>
     </div>
 </x-app-layout>

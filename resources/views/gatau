@@ -1,0 +1,144 @@
+   @auth
+            @if(Auth::user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}" class="text-emerald-700 font-medium hover:text-emerald-800">Dashboard</a>
+            @endif
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="text-white bg-emerald-600 hover:bg-emerald-700 px-5 py-2 rounded-full transition">
+                    Logout
+                </button>
+            </form>
+        @else
+            <a href="{{ route('register') }}" class="text-emerald-700 font-medium border border-emerald-600 px-4 py-2 rounded-full hover:bg-emerald-600 hover:text-white transition">Sign in</a>
+            <a href="{{ route('login') }}" class="bg-emerald-600 text-white font-medium px-5 py-2 rounded-full hover:bg-emerald-700 transition">Login</a>
+    @endauth
+
+    
+
+
+    tolong implementasikan desain tersebut pada kode berikut
+
+@extends('layouts.admin')
+
+@section('content')
+<div class="p-6">
+    <h1 class="text-2xl font-bold mb-4 text-teal-700">Daftar Penyewaan</h1>
+
+    @if (session('success'))
+        <div class="bg-green-100 text-green-700 border border-green-300 px-4 py-2 rounded mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <table class="w-full border-collapse bg-white rounded-lg shadow">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="p-3 text-left">Nama Penyewa</th>
+                <th class="p-3 text-left">Tanggal Sewa</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($rentals as $rental)
+                <tr class="border-b">
+                    <td class="p-3">{{ $loop->iteration }}</td>
+                    <td class="p-3">{{ $rental->nama_penyewa }}</td>
+                    <td class="p-3">{{ $rental->tanggal_sewa }}</td>
+                    <td class="p-3 capitalize">
+                        <span class="px-2 py-1 rounded text-sm 
+                            {{ $rental->status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                            {{ $rental->status }}
+                        </span>
+                    </td>
+                    <td class="p-3">
+                        @if ($rental->status !== 'confirmed')
+                            <form action="{{ route('admin.rental.confirm', $rental->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 transition">
+                                    Konfirmasi
+                                </button>
+                            </form>
+                        @else
+                            <span class="text-gray-400">Sudah dikonfirmasi</span>
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="5" class="p-4 text-center text-gray-500">Belum ada data penyewaan</td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endsection
+
+dengan button-button yang sudah responsif
+
+
+<button 
+                        @click="openDetail({{ $rental->toJson() }})"
+                        class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-4 py-1.5 rounded-full transition-all duration-300 shadow-sm hover:scale-105">
+                        Detail
+                    </button>
+                </div>
+            </div>
+        @endforeach
+
+        @if ($rentals->isEmpty())
+            <div class="text-center text-gray-500 italic py-10 bg-white rounded-xl shadow-sm">
+                Belum ada data penyewaan.
+            </div>
+        @endif
+    </div>
+
+    {{-- Modal Detail --}}
+    <div x-show="showModal" x-transition.opacity class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
+            <button @click="showModal = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+                ✕
+            </button>
+
+            <h2 class="text-2xl font-semibold text-teal-700 mb-4">Detail Penyewaan</h2>
+
+            <template x-if="selectedRental">
+                <div class="space-y-2 text-gray-700">
+                    <p><strong>Nama:</strong> <span x-text="selectedRental.user?.name ?? 'Tidak diketahui'"></span></p>
+                    <p><strong>Email:</strong> <span x-text="selectedRental.user?.email ?? '-'"></span></p>
+                    <p><strong>No. HP:</strong> <span x-text="selectedRental.no_hp ?? '-'"></span></p>
+                    <p><strong>Alamat:</strong> <span x-text="selectedRental.alamat ?? '-'"></span></p>
+                    <p><strong>Barang Disewa:</strong> <span x-text="selectedRental.barang?.nama_barang ?? '-'"></span></p>
+                    <p><strong>Tanggal Sewa:</strong> <span x-text="selectedRental.tanggal_sewa"></span></p>
+                    <p><strong>Tanggal Kembali:</strong> <span x-text="selectedRental.tanggal_kembali"></span></p>
+                    <p><strong>Total Harga:</strong> Rp<span x-text="selectedRental.total_harga?.toLocaleString('id-ID')"></span></p>
+                    <p><strong>Status:</strong> <span x-text="selectedRental.status"></span></p>
+                </div>
+            </template>
+
+            <form x-show="selectedRental?.status === 'Menunggu Konfirmasi'" 
+                  :action="'/admin/rental/confirm/' + selectedRental.id" method="POST" class="mt-6">
+                @csrf
+                <button type="submit" 
+                    class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded-lg transition-all duration-300">
+                    Konfirmasi Pesanan
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Alpine.js --}}
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('rentalList', () => ({
+        showModal: false,
+        selectedRental: null,
+        openDetail(rental) {
+            this.selectedRental = rental;
+            this.showModal = true;
+        },
+    }))
+})
+</script>

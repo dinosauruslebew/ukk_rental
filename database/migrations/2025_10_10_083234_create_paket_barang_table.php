@@ -12,7 +12,7 @@ Schema::create('paket_barang', function (Blueprint $table) {
     $table->unsignedBigInteger('id_barang');
 
     $table->foreign('id_paket')->references('id_paket')->on('paket')->cascadeOnDelete();
-    $table->foreign('id_barang')->references('id_barang')->on('barang')->cascadeOnDelete();
+    $table->foreign('id_barang')->references('id_barang')->on('barangs')->cascadeOnDelete();
 
     $table->timestamps();
 });
