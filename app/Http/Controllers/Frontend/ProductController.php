@@ -8,23 +8,12 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Menampilkan halaman semua produk (All Products) dengan fitur filter.
-     */
     public function index(Request $request)
     {
-        // Filter rentang harga
-        $priceRanges = [
-            '0-50000' => 'Rp 0 - Rp 50.000',
-            '50001-100000' => 'Rp 50.001 - Rp 100.000',
-            '100001-200000' => 'Rp 100.001 - Rp 200.000',
-            '200001-9999999' => 'Diatas Rp 200.000',
-        ];
-
-        // Mulai query barang
+        // 1. Mulai Query
         $query = Barang::query();
 
-        // Filter pencarian
+        // 2. Filter Pencarian (Search)
         $query->when($request->filled('search'), function ($q) use ($request) {
             $searchTerm = '%' . $request->search . '%';
             return $q->where(function ($subQuery) use ($searchTerm) {
@@ -33,38 +22,26 @@ class ProductController extends Controller
             });
         });
 
-        // Filter ketersediaan
-        $query->when($request->filled('availability'), function ($q) use ($request) {
-            return $q->where('status', $request->availability);
-        });
-
-        // Filter rentang harga
-        $query->when($request->filled('price_range'), function ($q) use ($request) {
-            $prices = explode('-', $request->price_range);
-            return $q->whereBetween('harga_sewa', [$prices[0], $prices[1]]);
-        });
-
-        // Filter kategori
-        $query->when($request->filled('category'), function ($q) use ($request) {
+        // 3. Filter Kategori (PENTING: Ini logic untuk Tab Kategori)
+        // Jika ada request 'category' dan isinya BUKAN 'all', kita filter.
+        $query->when($request->filled('category') && $request->category !== 'all', function ($q) use ($request) {
             return $q->where('kategori', $request->category);
         });
 
-        // Ambil hasil akhir
+        // 4. Ambil Data Barang
         $barang = $query->orderBy('created_at', 'desc')->get();
 
-        // Ambil semua kategori unik untuk sidebar
-        $kategori = Barang::select('kategori')->distinct()->pluck('kategori');
+        // 5. Ambil Daftar Kategori Unik untuk Tab Navigasi
+        $kategori = Barang::select('kategori')->whereNotNull('kategori')->distinct()->pluck('kategori');
 
-        // Return ke view
+        // 6. Kirim ke View
         return view('frontend.produk.index', [
             'barang' => $barang,
-            'priceRanges' => $priceRanges,
+            'kategori' => $kategori,
+            'activeCategory' => $request->category ?? 'all', // Untuk menandai tab yang aktif
         ]);
     }
 
-    /**
-     * Menampilkan halaman detail produk.
-     */
     public function show(Barang $barang)
     {
         return view('frontend.produk.detail', [

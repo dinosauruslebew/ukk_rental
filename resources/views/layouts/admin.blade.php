@@ -36,17 +36,6 @@
                <span>Rental</span>
             </a>
 
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-teal-900 {{ request()->routeIs('admin.pembayaran.*') ? 'bg-teal-900' : '' }}">
-               <i class="fa-solid fa-wallet text-lg"></i>
-               <span>Pembayaran</span>
-            </a>
-
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-teal-900 {{ request()->routeIs('admin.pembayaran.*') ? 'bg-teal-900' : '' }}">
-               <i class="fa-solid fa-user text-lg"></i>
-               <span>Edit Profil</span>
-            </a>
         </nav>
 
         <div class="p-4 border-t border-teal-800">
@@ -62,7 +51,7 @@
 
     <!-- MAIN CONTENT -->
     <main class="flex-1 ml-64 flex flex-col">
-        
+
         {{-- <!-- ✨ Header Modern -->
         <header class="sticky top-0 bg-white/80 backdrop-blur-xl border-gray-200 p-3 flex justify-between items-center transition-all duration-300 ease-in-out z-40">
             <div>

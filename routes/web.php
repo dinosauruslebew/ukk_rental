@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PengaturanController;
 // --- IMPORT FRONTEND CONTROLLERS ---
 use App\Http\Controllers\Frontend\LandingController;
 use App\Http\Controllers\Frontend\ProductController;
+use App\Http\Controllers\Frontend\CartController;
 
 use App\Models\Barang; // (Sebenarnya ini tidak perlu di file routes)
 
@@ -25,6 +26,9 @@ Route::get('/', [LandingController::class, 'index'])->name('frontend.landing');
 Route::get('/produk', [ProductController::class, 'index'])->name('frontend.produk.index');
 Route::get('/produk/{barang:id_barang}', [ProductController::class, 'show'])->name('frontend.produk.detail');
 
+// --- ROUTES BARU UNTUK KERANJANG & SEWA ---
+Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/rental/now/{id}', [CartController::class, 'rentNow'])->name('rental.now');
 
 
 // ======================================

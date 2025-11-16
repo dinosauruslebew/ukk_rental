@@ -4,7 +4,7 @@
 
     <!-- hero section (Home) -->
   <section id="home" class="relative w-full flex justify-center items-center pt-24 px-6 scroll-mt-20">
-  <div class="relative w-full max-w-7xl mx-auto" 
+  <div class="relative w-full max-w-7xl mx-auto"
        x-data="{ active: 0, images: [
          './utama.jpg',
          './home2.jpg',
@@ -18,11 +18,11 @@
         <div
           class="absolute inset-0 transition-all duration-1000"
           x-show="active === index"
-          
-          x-transition:enter="transform ease-in-out duration-1000" 
+
+          x-transition:enter="transform ease-in-out duration-1000"
           x-transition:enter-start="translate-x-full"
           x-transition:enter-end="translate-x-0"
-          
+
           x-transition:leave="transform ease-in-out duration-1000"
           x-transition:leave-start="translate-x-0"
           x-transition:leave-end="-translate-x-full"
@@ -41,7 +41,7 @@
         Find the perfect gear for your next adventures!
       </p>
     </div>
-    
+
   </div>
 </section>
 
@@ -84,7 +84,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-3xl font-bold text-gray-900">New Arrival</h3>
-                <a href="{{ route('frontend.produk.index') }}" 
+                <a href="{{ route('frontend.produk.index') }}"
                     class="text-emerald-600 font-semibold hover:underline">
                     See all products &rarr;
                 </a>
@@ -132,7 +132,7 @@
         </div>
     </section>
 
-    {{-- <!-- Promo Section (BARU - Sesuai Referensi image_bada25.jpg) -->
+    <!-- Promo Section (BARU - Sesuai Referensi image_bada25.jpg) -->
     <section id="promo" class="mt-16 px-6">
         <div class="max-w-7xl mx-auto bg-emerald-50 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-lg border border-emerald-100">
             <div class="md:w-1/2 text-center md:text-left mb-6 md:mb-0">
@@ -148,7 +148,7 @@
                 <img src="/kompor.jpeg" alt="Promo Tenda dan Ransel" class="max-h-60 rounded-lg shadow-lg">
             </div>
         </div>
-    </section> --}}
+    </section>
 
     <!-- Review Section (LAMA - Tapi dipertahankan) -->
     <section id="review" class="mt-16 py-16 bg-white px-6 scroll-mt-20">
@@ -195,7 +195,7 @@
 <!-- Gallery Section -->
 <section id="gallery" class="mt-15 px-6 scroll-mt-20">
   <div class="max-w-7xl mx-auto">
-    <h3 class="text-4xl font-bold text-gray-900 mb-8 text-center"> 
+    <h3 class="text-4xl font-bold text-gray-900 mb-8 text-center">
         <img src="/gunung.png" class="w-20"/>Gallery</h3>
 
     <!-- Scrollable Container -->
