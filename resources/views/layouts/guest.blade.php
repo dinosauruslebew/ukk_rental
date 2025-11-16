@@ -1,25 +1,50 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+<body class="antialiased bg-gray-50">
+
+    <div class="min-h-screen grid grid-cols-1 md:grid-cols-2">
+
+        <!-- KIRI: GAMBAR -->
+        <div class="relative hidden md:block">
+            <img src="/utama.jpg"
+                 class="w-full h-full object-cover brightness-75"
+                 alt="Jengki Adventure">
+
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+
+            <!-- Teks Branding -->
+            <div class="absolute bottom-10 left-10 text-white">
+                <h1 class="text-4xl font-bold drop-shadow-lg">Jengki Adventure</h1>
+                <p class="text-lg mt-2 max-w-sm drop-shadow-md">
+                    Solusi perlengkapan outdoor lengkap untuk pendakian & camping.
+                </p>
+            </div>
+        </div>
+
+        <!-- KANAN: FORM -->
+        <div class="flex justify-center items-center px-6 py-10">
+            <div class="w-full max-w-md rounded-2xl p-8">
                 {{ $slot }}
             </div>
         </div>
-    </body>
+
+    </div>
+
+</body>
 </html>
