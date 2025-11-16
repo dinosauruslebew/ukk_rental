@@ -74,90 +74,139 @@
         @endif
     </div>
 
-    {{-- Modal Detail --}}
-    <div id="rentalModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
-            <button id="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">✕</button>
-            <h2 class="text-2xl font-semibold text-teal-700 mb-4">Detail Penyewaan</h2>
-            <div id="modalContent" class="space-y-2 text-gray-700">
-                <!-- filled by JS -->
-            </div>
-            <form id="confirmForm" action="#" method="POST" class="mt-6 hidden">
-                @csrf
-                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded-lg transition-all duration-300">Konfirmasi Pesanan</button>
-            </form>
+   {{-- Modal Detail --}}
+<div id="rentalModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-300">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative transform scale-95 opacity-0 transition-all duration-300" id="modalBox">
+        <button id="closeModal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl">✕</button>
+
+        <h2 class="text-2xl font-bold text-teal-700 mb-5 flex items-center gap-2">
+            <i class="fa-solid fa-receipt text-amber-500"></i> Detail Penyewaan
+        </h2>
+
+        <div id="modalContent" class="space-y-3 text-gray-700"></div>
+
+        <div id="modalActions" class="mt-6 flex flex-col gap-3">
+            <!-- Buttons muncul dinamis dari JS -->
         </div>
     </div>
 </div>
-
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const statusButtons = document.querySelectorAll('#statusFilters button[data-status]');
     const rentalCards = document.querySelectorAll('.rental-card');
     const modal = document.getElementById('rentalModal');
+    const modalBox = document.getElementById('modalBox');
     const modalContent = document.getElementById('modalContent');
+    const modalActions = document.getElementById('modalActions');
     const closeModalBtn = document.getElementById('closeModal');
-    const confirmForm = document.getElementById('confirmForm');
 
-    function formatCurrency(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+    // format angka rupiah
+    const formatCurrency = (num) => (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
+    // animasi modal muncul
+    const showModal = () => {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modalBox.classList.remove('scale-95', 'opacity-0');
+            modalBox.classList.add('scale-100', 'opacity-100');
+        }, 50);
+    };
+
+    const hideModal = () => {
+        modalBox.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    };
+
+    // tombol filter status
     function filterByStatus(status) {
         rentalCards.forEach(card => {
-            if (status === 'Semua' || card.dataset.status === status) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
+            card.style.display = (status === 'Semua' || card.dataset.status === status) ? '' : 'none';
         });
     }
 
     statusButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // reset styles
-            statusButtons.forEach(b => b.classList.remove('bg-teal-600','text-white','border-teal-600'));
-            btn.classList.add('bg-teal-600','text-white','border-teal-600');
+            statusButtons.forEach(b => b.classList.remove('bg-teal-600','text-white','border-teal-600','shadow-md'));
+            btn.classList.add('bg-teal-600','text-white','border-teal-600','shadow-md');
             filterByStatus(btn.dataset.status);
         });
     });
 
-    // set initial active filter to 'Semua'
+    // set default active ke "Semua"
     if (statusButtons.length > 0) {
-        statusButtons[0].classList.add('bg-teal-600','text-white','border-teal-600');
+        statusButtons[0].classList.add('bg-teal-600','text-white','border-teal-600','shadow-md');
         filterByStatus('Semua');
     }
 
-    // open detail
+    // buka modal detail
     document.querySelectorAll('.open-detail').forEach(btn => {
         btn.addEventListener('click', () => {
             const data = JSON.parse(btn.getAttribute('data-rental'));
             modalContent.innerHTML = `
-                <p><strong>Nama:</strong> ${data.nama}</p>
-                <p><strong>Email:</strong> ${data.email}</p>
-                <p><strong>No. HP:</strong> ${data.no_hp || '-'}</p>
-                <p><strong>Alamat:</strong> ${data.alamat || '-'}</p>
-                <p><strong>Barang Disewa:</strong> ${data.barang}</p>
-                <p><strong>Tanggal Sewa:</strong> ${data.tanggal_sewa || '-'}</p>
-                <p><strong>Tanggal Kembali:</strong> ${data.tanggal_kembali || '-'}</p>
-                <p><strong>Total Harga:</strong> Rp${formatCurrency(data.total || 0)}</p>
-                <p><strong>Status:</strong> ${data.status}</p>
+                <div class="bg-gray-50 p-3 rounded-xl">
+                    <p><strong>Nama:</strong> ${data.nama}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>No. HP:</strong> ${data.no_hp || '-'}</p>
+                    <p><strong>Alamat:</strong> ${data.alamat || '-'}</p>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-xl">
+                    <p><strong>Barang:</strong> ${data.barang}</p>
+                    <p><strong>Tanggal Sewa:</strong> ${data.tanggal_sewa || '-'}</p>
+                    <p><strong>Tanggal Kembali:</strong> ${data.tanggal_kembali || '-'}</p>
+                    <p><strong>Total Harga:</strong> <span class="text-teal-600 font-semibold">Rp${formatCurrency(data.total || 0)}</span></p>
+                    <p><strong>Status:</strong> 
+                        <span class="px-2 py-0.5 text-xs font-semibold rounded-full 
+                            ${data.status === 'Menunggu Konfirmasi' ? 'bg-yellow-100 text-yellow-700' :
+                              data.status === 'Menunggu Pembayaran' ? 'bg-purple-100 text-purple-700' :
+                              data.status === 'Sedang Disewa' ? 'bg-amber-100 text-amber-700' :
+                              data.status === 'Selesai' ? 'bg-green-100 text-green-700' :
+                              'bg-gray-100 text-gray-600'}">
+                            ${data.status}
+                        </span>
+                    </p>
+                </div>
+
+                <div class="text-sm text-gray-500 italic mt-2">
+                    ⚠️ Penyewa wajib meninggalkan jaminan berupa kartu identitas (KTP/SIM) di tempat rental.<br>
+                    📅 Jika melewati tanggal kembali, akan dikenakan denda.<br>
+                    🔧 Kerusakan barang akan dikenakan biaya penggantian sesuai kerugian.
+                </div>
             `;
 
+            // atur tombol sesuai status
+            modalActions.innerHTML = '';
             if (data.status === 'Menunggu Konfirmasi') {
-                confirmForm.classList.remove('hidden');
-                confirmForm.action = `/admin/rental/${data.id}/confirm`;
-            } else {
-                confirmForm.classList.add('hidden');
+                modalActions.innerHTML = `
+                    <form action="/admin/rental/${data.id}/confirm" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-300">Konfirmasi Pesanan</button>
+                    </form>
+                `;
+            } else if (data.status === 'Menunggu Pembayaran') {
+                modalActions.innerHTML = `
+                    <form action="/admin/rental/${data.id}/confirm-payment" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg transition-all duration-300">Konfirmasi Pembayaran</button>
+                    </form>
+                `;
+            } else if (data.status === 'Sedang Disewa') {
+                modalActions.innerHTML = `
+                    <form action="/admin/rental/${data.id}/finish" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-300">Selesaikan Pesanan</button>
+                    </form>
+                `;
             }
 
-            modal.classList.remove('hidden');
+            showModal();
         });
     });
 
-    closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+    closeModalBtn.addEventListener('click', hideModal);
+    modal.addEventListener('click', e => { if (e.target === modal) hideModal(); });
 });
 </script>
+
 @endsection

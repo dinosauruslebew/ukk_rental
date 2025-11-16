@@ -3,22 +3,47 @@
 @section('content')
 
     <!-- hero section (Home) -->
-    <section id="home" class="relative w-full flex justify-center items-center pt-24 px-6">
-        <div class="relative w-full max-w-7xl mx-auto">
-            <img src="./utama.jpg" alt="Adventure Tent"
-                 class="rounded-3xl shadow-lg w-full h-[450px] object-cover brightness-75">
+  <section id="home" class="relative w-full flex justify-center items-center pt-24 px-6 scroll-mt-20">
+  <div class="relative w-full max-w-7xl mx-auto" 
+       x-data="{ active: 0, images: [
+         './utama.jpg',
+         './home2.jpg',
+         './home3.jpg',
+         './home4.jpg'
+       ] }"
+       x-init="setInterval(() => { active = (active + 1) % images.length }, 5000)">
 
-            <div class="absolute inset-0 flex flex-col items-start justify-center px-10 md:px-20 text-white">
-                <p class="text-sm font-semibold uppercase tracking-widest drop-shadow-md">OUR SHOP</p>
-                <h2 class="text-4xl md:text-5xl font-bold mb-3 drop-shadow-lg mt-2 max-w-lg">
-                    Explore Our Top-Quality Outdoor Gear Rentals
-                </h2>
-                <p class="text-lg md:text-xl mb-6 drop-shadow-md max-w-md">
-                    Find the perfect gear for your next adventures!
-                </p>
-            </div>
+    <div class="relative overflow-hidden rounded-3xl shadow-lg w-full h-[450px]">
+      <template x-for="(img, index) in images" :key="index">
+        <div
+          class="absolute inset-0 transition-all duration-1000"
+          x-show="active === index"
+          
+          x-transition:enter="transform ease-in-out duration-1000" 
+          x-transition:enter-start="translate-x-full"
+          x-transition:enter-end="translate-x-0"
+          
+          x-transition:leave="transform ease-in-out duration-1000"
+          x-transition:leave-start="translate-x-0"
+          x-transition:leave-end="-translate-x-full"
+        >
+          <img :src="img" alt="Gallery image"
+               class="w-full h-full object-cover brightness-75 rounded-3xl">
         </div>
-    </section>
+      </template>
+    </div>
+
+    <div class="absolute inset-0 flex flex-col items-start justify-center px-10 md:px-20 text-white pointer-events-none">
+      <h2 class="text-4xl md:text-5xl font-bold mb-3 drop-shadow-lg mt-2 max-w-lg">
+        Explore Our Top-Quality Outdoor Gear Rentals
+      </h2>
+      <p class="text-lg md:text-xl mb-6 drop-shadow-md max-w-md">
+        Find the perfect gear for your next adventures!
+      </p>
+    </div>
+    
+  </div>
+</section>
 
     <!-- Kategori Section (BARU - Sesuai Referensi image_bada25.jpg) -->
     <section id="categories" class="mt-16 px-6 text-center">
@@ -59,12 +84,16 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-3xl font-bold text-gray-900">New Arrival</h3>
-                <a href="#products" class="text-emerald-600 font-semibold hover:underline">See all products &rarr;</a>
+                <a href="{{ route('frontend.produk.index') }}" 
+                    class="text-emerald-600 font-semibold hover:underline">
+                    See all products &rarr;
+                </a>
+
             </div>
 
             <!-- Grid (Ambil 3 barang terbaru dari $barang) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                @forelse($barang->sortByDesc('created_at')->take(3) as $item)
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                @forelse($barang->sortByDesc('created_at')->take(4) as $item)
                      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100">
                         <a href="{{ route('frontend.produk.detail', $item) }}">
                             <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_barang }}"
@@ -103,7 +132,7 @@
         </div>
     </section>
 
-    <!-- Promo Section (BARU - Sesuai Referensi image_bada25.jpg) -->
+    {{-- <!-- Promo Section (BARU - Sesuai Referensi image_bada25.jpg) -->
     <section id="promo" class="mt-16 px-6">
         <div class="max-w-7xl mx-auto bg-emerald-50 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-lg border border-emerald-100">
             <div class="md:w-1/2 text-center md:text-left mb-6 md:mb-0">
@@ -119,7 +148,7 @@
                 <img src="/kompor.jpeg" alt="Promo Tenda dan Ransel" class="max-h-60 rounded-lg shadow-lg">
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Review Section (LAMA - Tapi dipertahankan) -->
     <section id="review" class="mt-16 py-16 bg-white px-6 scroll-mt-20">
@@ -163,18 +192,29 @@
         </div>
     </section>
 
-    <!-- Gallery Section (LAMA - Tapi dipertahankan) -->
-    <section id="gallery" class="mt-16 px-6 scroll-mt-20">
-        <div class="max-w-7xl mx-auto">
-            <h3 class="text-3xl font-bold text-gray-900 mb-8 text-center">Our Gallery</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <img src="/kompor.jpeg" alt="Gallery 1" class="rounded-lg shadow-md aspect-square object-cover hover:scale-105 transition-transform duration-300">
-                <img src="/tenda.jpeg" alt="Gallery 2" class="rounded-lg shadow-md aspect-square object-cover hover:scale-105 transition-transform duration-300">
-                <img src="/lampu_tenda.jpeg" alt="Gallery 3" class="rounded-lg shadow-md aspect-square object-cover hover:scale-105 transition-transform duration-300">
-                <img src="/utama.jpg" alt="Gallery 4" class="rounded-lg shadow-md aspect-square object-cover hover:scale-105 transition-transform duration-300">
-            </div>
+<!-- Gallery Section -->
+<section id="gallery" class="mt-15 px-6 scroll-mt-20">
+  <div class="max-w-7xl mx-auto">
+    <h3 class="text-4xl font-bold text-gray-900 mb-8 text-center"> 
+        <img src="/gunung.png" class="w-20"/>Gallery</h3>
+
+    <!-- Scrollable Container -->
+    <div class="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-hide scroll-smooth">
+      @foreach (['/galeri1.png','/galeri2.png','/galeri3.png','/galeri4.png','/galeri1.png'] as $img)
+        <div class="min-w-[280px] snap-center bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+          <img src="{{ $img }}" alt="Gallery image"
+               class="w-full h-60 object-cover hover:scale-105 transition-transform duration-500">
         </div>
-    </section>
+      @endforeach
+    </div>
+  </div>
+</section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
 
     <!-- SECTION HISTORY (LAMA - Tapi dipertahankan, style lekuk) -->
     <section id="history" class="mt-16 px-6 scroll-mt-20">

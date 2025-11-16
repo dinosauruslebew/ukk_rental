@@ -1,169 +1,333 @@
 @extends('layouts.admin')
 
 @section('content')
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="p-8 min-h-screen bg-[#f7fafc]">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Dashboard Overview</h1>
+            <p class="text-sm text-gray-500 mt-1">ringkasan aktivitas rental & kalender peminjaman</p>
+        </div>
 
-<div class="p-8 min-h-screen bg-gradient-to-br from-blue-50 to-pink-50 py-10 px-8">
-
-    {{-- ✨ judul --}}
-    <div class="mb-10 text-center">
-        <h2 class="text-4xl font-bold text-gray-800">Dashboard Overview</h2>
+        <div class="flex items-center gap-4">
+            <div class="text-right">
+                <div class="text-xs text-gray-400">Admin</div>
+                <div class="font-medium text-gray-700">{{ auth()->user()->name ?? 'Admin' }}</div>
+            </div>
+            <img src="{{ auth()->user()->profile_photo_url ?? '/default-user.png' }}" alt="admin" class="w-12 h-12 rounded-full object-cover border">
+        </div>
     </div>
 
-    {{-- ✨ statistik cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between">
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-sm text-gray-500">Total Barang</p>
-                    <h3 class="text-3xl font-extrabold text-teal-700 mt-1">{{ $totalBarang }}</h3>
+                    <p class="text-2xl font-extrabold text-[#0ea5a3] mt-2">{{ $totalBarang }}</p>
                 </div>
-                <div class="bg-teal-100 text-teal-700 p-3 rounded-xl">
-                    <i class="fa-solid fa-box text-2xl"></i>
+                <div class="p-3 rounded-lg bg-[#e6fffa] text-[#0ea5a3]">
+                    <i class="fa-solid fa-box text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-sm text-gray-500">User Terdaftar</p>
-                    <h3 class="text-3xl font-extrabold text-green-700 mt-1">{{ $totalUsers }}</h3>
+                    <p class="text-2xl font-extrabold text-[#059669] mt-2">{{ $totalUsers }}</p>
                 </div>
-                <div class="bg-green-100 text-green-700 p-3 rounded-xl">
-                    <i class="fa-solid fa-users text-2xl"></i>
+                <div class="p-3 rounded-lg bg-[#ecfdf5] text-[#059669]">
+                    <i class="fa-solid fa-users text-xl"></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-sm text-gray-500">Rental Aktif</p>
-                    <h3 class="text-3xl font-extrabold text-yellow-600 mt-1">{{ $totalRentalAktif }}</h3>
+                    <p class="text-2xl font-extrabold text-[#d97706] mt-2">{{ $totalRentalAktif }}</p>
                 </div>
-                <div class="bg-yellow-100 text-yellow-600 p-3 rounded-xl">
-                    <i class="fa-solid fa-calendar-check text-2xl"></i>
+                <div class="p-3 rounded-lg bg-[#fff7ed] text-[#d97706]">
+                    <i class="fa-solid fa-calendar-check text-xl"></i>
                 </div>
             </div>
         </div>
 
-        {{-- tambahan insight --}}
-        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100 hover:shadow-xl transition-all duration-300">
-            <div class="flex items-center justify-between">
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-sm text-gray-500">Barang Tidak Tersedia</p>
-                    <h3 class="text-3xl font-extrabold text-red-600 mt-1">{{ $barangTidakTersedia ?? 0 }}</h3>
+                    <p class="text-2xl font-extrabold text-[#ef4444] mt-2">{{ $barangTidakTersedia }}</p>
                 </div>
-                <div class="bg-red-100 text-red-600 p-3 rounded-xl">
-                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                <div class="p-3 rounded-lg bg-[#fff1f2] text-[#ef4444]">
+                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- ✨ chart revenue (muncul kalau ada pesanan) --}}
-    @if(!empty($chartData['values']) && count(array_filter($chartData['values'])) > 0)
-    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-12">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <i class="fa-solid fa-chart-line text-teal-600"></i> Pendapatan Bulanan
-            </h3>
-            <span class="text-sm text-gray-400">Diperbarui {{ now()->translatedFormat('F Y') }}</span>
+    <!-- Main area: Chart (left) + Calendar (right) on large screens -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800"><i class="fa-solid fa-chart-line text-[#0ea5a3] mr-2"></i> Pendapatan Bulanan</h3>
+                <div class="text-sm text-gray-400">Diperbarui {{ now()->translatedFormat('F Y') }}</div>
+            </div>
+
+            @if(!empty($chartData['values']) && count(array_filter($chartData['values'])) > 0)
+                <canvas id="revenueChart" height="140"></canvas>
+            @else
+                <div class="text-center text-gray-500 italic py-10">Belum ada transaksi — grafik akan muncul setelah ada pesanan</div>
+            @endif
         </div>
-        <canvas id="revenueChart" height="120"></canvas>
-    </div>
-    @else
-    <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-8 mb-12 text-center text-gray-500 italic">
-        <i class="fa-regular fa-circle-question text-4xl mb-3 text-gray-400"></i>
-        <p>Belum ada transaksi yang masuk, grafik pendapatan akan tampil setelah ada pesanan.</p>
-    </div>
-    @endif
 
-    {{-- ✨ recent rentals --}}
-    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-        <h3 class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
-            <i class="fa-solid fa-receipt text-teal-600"></i> Penyewaan Terbaru
-        </h3>
+        <!-- Kalender & daftar penyewa -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="font-semibold text-gray-800 text-lg flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-days text-[#0ea5a3]"></i> Kalender Penyewaan
+                </h4>
+                <p class="text-sm text-gray-400">klik tanggal untuk lihat detail</p>
+            </div>
 
-        <table class="w-full text-left border-t border-gray-100">
-            <thead>
-                <tr class="text-gray-500 text-sm border-b">
-                    <th class="py-2">Penyewa</th>
-                    <th>Barang</th>
-                    <th>Tanggal</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($recentRentals as $rental)
-                    <tr class="border-b hover:bg-teal-50/50 transition">
-                        <td class="py-2">{{ $rental->user->name ?? '-' }}</td>
-                        <td>{{ $rental->barang->nama_barang ?? '-' }}</td>
-                        <td>{{ $rental->created_at->format('d M Y') }}</td>
-                        <td>
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold
-                                {{ $rental->status == 'aktif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                {{ ucfirst($rental->status) }}
-                            </span>
-                        </td>
-                        <td>Rp{{ number_format($rental->total_harga ?? 0, 0, ',', '.') }}</td>
+            <!-- kalender -->
+            <div id="calendar" class="rounded-xl overflow-hidden border border-gray-100 mb-5 bg-gray-50"></div>
+
+            <!-- daftar penyewa -->
+            <div id="rentalsList" class="hidden transition-all duration-300 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <div class="flex items-center justify-between mb-3">
+                    <h5 class="font-semibold text-gray-700 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-day text-teal-500"></i>
+                        <span id="rentalsListDate"></span>
+                    </h5>
+                    <a href="#" class="text-xs text-teal-600 hover:underline">lihat semua</a>
+                </div>
+                <ul id="rentalsListItems" class="space-y-3 max-h-52 overflow-y-auto"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent rentals -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Penyewaan Terbaru</h3>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="text-sm text-gray-500 border-b">
+                        <th class="py-2">Penyewa</th>
+                        <th>Barang</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th>Total</th>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="py-6 text-center text-gray-500 italic">
-                            Belum ada transaksi penyewaan terbaru.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse($recentRentals as $r)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-3">{{ $r->user->name ?? '-' }}</td>
+                            <td>{{ $r->barang->nama_barang ?? '-' }}</td>
+                            <td class="text-sm text-gray-500">{{ $r->tanggal_sewa ? \Carbon\Carbon::parse($r->tanggal_sewa)->format('d M Y') : $r->created_at->format('d M Y') }}</td>
+                            <td>
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                    {{ in_array(strtolower($r->status), ['aktif','selesai','dikonfirmasi']) ? 'bg-green-100 text-green-700' : (strtolower($r->status) === 'menunggu pembayaran' ? 'bg-purple-100 text-purple-700' : 'bg-yellow-100 text-yellow-700') }}">
+                                    {{ ucfirst($r->status) }}
+                                </span>
+                            </td>
+                            <td>Rp{{ number_format($r->total_harga ?? 0,0,',','.') }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="py-6 text-center text-gray-500 italic">Belum ada transaksi penyewaan terbaru.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-@if(!empty($chartData['values']) && count(array_filter($chartData['values'])) > 0)
+<!-- Scripts: Chart.js + FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
 <script>
-    const ctx = document.getElementById('revenueChart').getContext('2d');
+document.addEventListener('DOMContentLoaded', function() {
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(56, 178, 172, 0.3)');
-    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    // --- Chart (sama seperti sebelumnya) ---
+    @if(!empty($chartData['values']) && count(array_filter($chartData['values'])) > 0)
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0,0,0,300);
+        gradient.addColorStop(0, 'rgba(16,185,129,0.20)'); // emerald
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: @json($chartData['labels']),
-            datasets: [{
-                label: 'Pendapatan (Rp)',
-                data: @json($chartData['values']),
-                borderColor: '#319795',
-                backgroundColor: gradient,
-                borderWidth: 3,
-                pointRadius: 5,
-                pointBackgroundColor: '#2C7A7B',
-                tension: 0.4,
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f1f1f1' },
-                    ticks: { color: '#4a5568', callback: val => 'Rp' + val.toLocaleString('id-ID') }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#4a5568' }
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @json($chartData['labels']),
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: @json($chartData['values']),
+                    borderColor: '#0ea5a3',
+                    backgroundColor: gradient,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#059669'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) { return 'Rp' + value.toLocaleString('id-ID'); },
+                            color: '#4a5568'
+                        },
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: {
+                        ticks: { color: '#4a5568' },
+                        grid: { display: false }
+                    }
                 }
             }
+        });
+    @endif
+
+    // --- FullCalendar ---
+    const eventsData = @json($calendarEvents ?? []);
+
+    const calendarEl = document.getElementById('calendar');
+    const rentalsList = document.getElementById('rentalsList');
+    const rentalsListDate = document.getElementById('rentalsListDate');
+    const rentalsListItems = document.getElementById('rentalsListItems');
+
+    function toIsoDate(d) {
+        // returns YYYY-MM-DD for Date or string date
+        if (!d) return null;
+        if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}/.test(d)) return d.slice(0,10);
+        const dt = new Date(d);
+        const y = dt.getFullYear();
+        const m = ('0' + (dt.getMonth()+1)).slice(-2);
+        const day = ('0' + dt.getDate()).slice(-2);
+        return `${y}-${m}-${day}`;
+    }
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 330,              // lebih compact
+        aspectRatio: 1.5,
+        headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: ''
+        },
+        events: eventsData,
+        eventDisplay: 'block',
+        dayMaxEvents: 2,
+
+        dayCellDidMount: function(info) {
+            // cek eventsData (server-provided) untuk indikator titik
+            const dateStr = toIsoDate(info.date);
+            const hasEvent = eventsData.some(e => {
+                const s = toIsoDate(e.start);
+                const en = e.end ? toIsoDate(e.end) : s;
+                return dateStr >= s && dateStr <= en;
+            });
+            if (hasEvent) {
+                const dot = document.createElement('div');
+                dot.className = 'mx-auto mt-1 w-2 h-2 rounded-full bg-teal-500';
+                info.el.appendChild(dot);
+            }
+        },
+
+        dateClick: function(info) {
+            const clickedIso = toIsoDate(info.date);
+            // gunakan eventsData (string) untuk kecepatan/fleksibilitas
+            const eventsThatDay = eventsData.filter(e => {
+                const s = toIsoDate(e.start);
+                const en = e.end ? toIsoDate(e.end) : s;
+                return clickedIso >= s && clickedIso <= en;
+            });
+
+            if (eventsThatDay.length > 0) {
+                rentalsList.classList.remove('hidden');
+                const localeDate = new Date(info.date).toLocaleDateString('id-ID', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+                rentalsListDate.textContent = localeDate;
+
+                rentalsListItems.innerHTML = '';
+                eventsThatDay.forEach(e => {
+                    const ext = e.extendedProps || {};
+                    rentalsListItems.innerHTML += `
+                        <li class="flex items-center justify-between bg-white px-3 py-2 rounded-xl shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <img src="${ext.avatar ?? 'https://i.pravatar.cc/40'}" 
+                                     class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                <div>
+                                    <p class="font-semibold text-gray-800">${ext.user_name ?? '-'}</p>
+                                    <p class="text-xs text-gray-500">${ext.barang ?? '-'}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1">
+                                <span class="text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(ext.status)}">
+                                    ${ext.status ?? '-'}
+                                </span>
+                                <a href="/admin/rental/${e.id}/show" class="text-xs text-teal-600 hover:underline">Lihat detail</a>
+                            </div>
+                        </li>
+                    `;
+                });
+            } else {
+                rentalsList.classList.add('hidden');
+            }
+        },
+
+        eventClick: function(info) {
+            // optional: klik event lengkap (bisa ubah jadi modal nanti)
+            const e = info.event;
+            const ext = e.extendedProps || {};
+            const lines = [
+                `Penyewa: ${ext.user_name ?? '-'}`,
+                `Barang: ${ext.barang ?? '-'}`,
+                `Status: ${ext.status ?? '-'}`,
+                `Total: Rp${((ext.total_harga || 0)).toLocaleString('id-ID')}`,
+                `Mulai: ${e.startStr}`,
+                `Selesai: ${e.endStr ?? '-'}`,
+            ];
+            alert(lines.join('\n'));
         }
     });
+
+    calendar.render();
+
+    // helper: pilih class berdasarkan status (tailwind classes)
+    function getStatusColor(status) {
+        const s = (status ?? '').toString().toLowerCase();
+        if (s.includes('menunggu pembayaran')) return 'bg-purple-100 text-purple-700';
+        if (s.includes('konfirmasi') || s.includes('menunggu konfirmasi')) return 'bg-yellow-100 text-yellow-700';
+        if (s.includes('selesai') || s.includes('aktif') || s.includes('dikonfirmasi')) return 'bg-green-100 text-green-700';
+        if (s.includes('batal') || s.includes('dibatalkan')) return 'bg-red-100 text-red-700';
+        return 'bg-gray-100 text-gray-600';
+    }
+
+});
 </script>
-@endif
+
+<!-- color palette used:
+    - teal emerald: #0ea5a3 / #10b981
+    - green: #059669
+    - soft bg: #f7fafc / #e6fffa
+    - purple accent: #c084fc
+    - red warn: #ef4444
+-->
 
 @endsection
