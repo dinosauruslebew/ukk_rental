@@ -45,8 +45,8 @@ class AuthenticatedSessionController extends Controller
         }
 
         // redirect ke landing page user biasa
-        return redirect()->route('landing');
-        
+        return redirect()->route('frontend.landing');
+
     }
 
     /**

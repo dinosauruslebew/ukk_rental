@@ -13,9 +13,9 @@ class Barang extends Model
     protected $fillable = [
         'nama_barang',
         'stok',
-        'harga_sewa',       // Harga 1 Malam
-        'harga_2_malam',    // Harga Paket 2 Malam
-        'harga_3_malam',    // Harga Paket 3 Malam
+        'harga_sewa',  
+        'harga_2_malam',
+        'harga_3_malam',
         'deskripsi',
         'gambar',
         'status',

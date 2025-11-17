@@ -9,6 +9,15 @@ class Rental extends Model
 {
     use HasFactory;
 
+    /**
+     * Tentukan primary key jika bukan 'id'
+     * Jika primary key kamu 'id_rental', uncomment baris di bawah
+     */
+    // protected $primaryKey = 'id_rental';
+
+    /**
+     * Tentukan field yang boleh diisi (SESUAI MODEL KAMU)
+     */
     protected $fillable = [
         'user_id',
         'barang_id',
@@ -18,13 +27,11 @@ class Rental extends Model
         'total_harga',
         'status',
         'catatan',
+        'bukti_pembayaran',
     ];
 
     /**
-     * Cast columns to proper types so dates become Carbon instances.
-     * Prevents errors when calling ->toDateString() in controllers.
-     *
-     * @var array<string,string>
+     * Casts (SESUAI MODEL KAMU, INI BAGUS!)
      */
     protected $casts = [
         'tanggal_sewa' => 'date',
@@ -33,15 +40,21 @@ class Rental extends Model
         'durasi' => 'integer',
     ];
 
-    // relasi ke user
+    /**
+     * Relasi ke User (Satu rental dimiliki satu user)
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // relasi ke barang
+    /**
+     * Relasi ke Barang (Satu rental untuk satu barang)
+     * KITA PERBAIKI DI SINI:
+     * Kita kasih tau foreign key 'barang_id' nyambungnya ke 'id_barang' di tabel barangs
+     */
     public function barang()
     {
-        return $this->belongsTo(Barang::class);
+        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
     }
 }

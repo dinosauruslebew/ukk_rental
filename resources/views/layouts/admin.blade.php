@@ -30,7 +30,7 @@
                <span>Barang</span>
             </a>
 
-            <a href="{{ route('admin.rental.index') }}"
+            <a href="{{ route('admin.order.index') }}"
                class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-teal-900 {{ request()->routeIs('admin.rentals.*') ? 'bg-teal-900' : '' }}">
                <i class="fa-solid fa-file-contract text-lg"></i>
                <span>Rental</span>

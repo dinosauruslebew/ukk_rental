@@ -206,15 +206,17 @@
 
         <!-- KOLOM KANAN: Grafik (Pendukung) -->
         <div class="lg:col-span-2 space-y-6">
-
             <!-- Grafik -->
             <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-gray-800">Pendapatan</h3>
-                    <button class="text-xs bg-gray-50 hover:bg-gray-100 text-gray-600 px-3 py-1.5 rounded-md border border-gray-200 transition"><i class="fa-solid fa-download mr-1"></i> Export</button>
-                </div>
-                <div class="relative h-72 w-full">
-                     @if(!empty($chartData['values']) && count(array_filter($chartData['values'])) > 0)
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Statistik Pendapatan</h3>
+                <div class="relative h-64 w-full">
+
+                    <!--
+                        ========================================
+                        PERBAIKAN ERROR CHART DI SINI!
+                        ========================================
+                    -->
+                    @if(!empty($chartData['values']) && $chartData['values']->sum() > 0)
                         <canvas id="revenueChart"></canvas>
                     @else
                         <div class="flex flex-col items-center justify-center h-full text-gray-400 border-2 border-dashed border-gray-100 rounded-xl">
@@ -225,45 +227,67 @@
                 </div>
             </div>
 
-            <!-- Tabel Transaksi -->
+            <!-- Tabel Transaksi (UPDATE LOGIC) -->
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-gray-900">Transaksi Terbaru</h3>
-                    <a href="{{ route('admin.rental.index') }}" class="text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline">Lihat Semua</a>
+                    <h3 class="text-lg font-bold text-gray-900">Pesanan Terbaru</h3>
+                    <!-- Pastikan route ini ada: admin.order.index -->
+                    <a href="{{ route('admin.order.index') }}" class="text-xs font-medium text-teal-600 hover:text-teal-700 hover:underline">
+                        Lihat Semua
+                    </a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-gray-50">
                             <tr class="text-xs uppercase text-gray-500 font-semibold">
+                                <th class="py-3 px-6">Order ID</th>
                                 <th class="py-3 px-6">Penyewa</th>
-                                <th class="py-3 px-6">Barang</th>
                                 <th class="py-3 px-6">Tanggal</th>
                                 <th class="py-3 px-6">Status</th>
                                 <th class="py-3 px-6 text-right">Total</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm divide-y divide-gray-100">
-                            @forelse($recentRentals as $r)
+                            <!--
+                                ========================================
+                                PERBAIKAN LOOPING: DARI 'rentals' ke 'orders'
+                                ========================================
+                            -->
+                            @forelse($recentOrders as $order)
                                 <tr class="hover:bg-gray-50 transition">
-                                    <td class="py-4 px-6 font-medium text-gray-900">{{ $r->user->name ?? 'Guest' }}</td>
-                                    <td class="py-4 px-6 text-gray-600">{{ $r->barang->nama_barang ?? '-' }}</td>
-                                    <td class="py-4 px-6 text-gray-500 text-xs">{{ $r->tanggal_sewa ? \Carbon\Carbon::parse($r->tanggal_sewa)->format('d M Y') : '-' }}</td>
+                                    <td class="py-4 px-6 font-medium text-gray-900">
+                                        <!-- Pastikan route ini ada: admin.order.show -->
+                                        <a href="{{ route('admin.order.show', $order->id) }}" class="hover:underline hover:text-teal-600">
+                                            #JENGKI-{{ $order->id }}
+                                        </a>
+                                    </td>
+                                    <td class="py-4 px-6 text-gray-600">{{ $order->user->name ?? 'Guest' }}</td>
+                                    <td class="py-4 px-6 text-gray-500 text-xs">{{ $order->created_at->format('d M Y') }}</td>
                                     <td class="py-4 px-6">
-                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border
-                                        {{ strtolower($r->status) == 'selesai' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200' }}">
-                                            {{ $r->status }}
+                                        <!-- Badge Status (dari order) -->
+                                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border
+                                        {{ $order->status == 'selesai' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200' }}">
+                                            {{ $order->status }}
                                         </span>
                                     </td>
-                                    <td class="py-4 px-6 text-right font-bold text-gray-800">Rp{{ number_format($r->total_harga ?? 0, 0, ',', '.') }}</td>
+                                    <td class="py-4 px-6 text-right font-bold text-gray-800">
+                                        Rp{{ number_format($order->total_harga_pesanan ?? 0, 0, ',', '.') }}
+                                    </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="5" class="py-10 text-center text-gray-400 italic text-xs">Belum ada transaksi.</td></tr>
+                                <tr>
+                                    <td colspan="5" class="py-10 text-center text-gray-400 italic">
+                                        <div class="flex flex-col items-center">
+                                            <i class="fa-regular fa-folder-open text-2xl mb-2 opacity-50"></i>
+                                            <span class="text-xs">Belum ada pesanan terbaru.</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
