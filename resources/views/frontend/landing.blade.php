@@ -43,7 +43,7 @@
     </div>
 
   </div>
-</section>
+</section> 
 
     <!-- Kategori Section (BARU - Sesuai Referensi image_bada25.jpg) -->
     <section id="categories" class="mt-16 px-6 text-center">
@@ -311,12 +311,13 @@
                 <span class="text-sm font-semibold uppercase tracking-widest text-emerald-600">How To Rent</span>
                 <h3 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 mt-2">Rental Rules</h3>
                 <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                    <li>Penyewa wajib menunjukkan kartu identitas asli (KTP/SIM) yang masih berlaku.</li>
-                    <li>Pembayaran (DP atau lunas) dilakukan saat booking untuk mengamankan barang.</li>
-                    <li>Barang yang disewa wajib dijaga dengan baik dan dikembalikan dalam kondisi bersih.</li>
-                    <li>Keterlambatan pengembalian akan dikenakan denda sesuai tarif harian.</li>
-                    <li>Kerusakan atau kehilangan barang akibat kelalaian penyewa menjadi tanggung jawab penuh penyewa.</li>
-                    <li>Pembatalan sewa H-1 akan dikenakan potongan 50% dari total biaya sewa.</li>
+                    <li>Penyewa wajib meninggalkan jaminan identitas berupa KTP/KTM/SIM/Kartu Tanda Pelajar yang masih berlaku.</li>
+                    <li>Penyewa berkenan diambil foto saat pengambilan barang.</li>
+                    <li>Jika terjadi kerusakan maupun kehilangan barang, maka penyewa wajib bertanggung jawab mengganti barang atau membayar sesuai ketentuan.</li>
+                    <li>Saat pengambilan barang wajib DP dan pelunasan bisa dilakukan saat pengembalian barang.</li>
+                    <li>Jika melakukan pembatalan booking namun sudah DP,maka dana masih bisa digunakan untuk menyewa kembali maksimal 1 bulan.</li>
+                    <li>Keterlambatan pengembalian akan dikenakan denda.</li>
+                    <li>Menyewa berarti menyetujui persyaratan dan ketentuan yang berlaku.</li>
                 </ol>
             </div>
         </div>

@@ -367,30 +367,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     const props = e.extendedProps;
 
                     // Tentukan warna badge & icon berdasarkan tipe
-                    const isSewa = props.color === 'emerald';
-                    const badgeColor = isSewa ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700';
-                    const icon = isSewa ? '<i class="fa-solid fa-arrow-right-to-bracket rotate-90"></i>' : '<i class="fa-solid fa-arrow-right-from-bracket rotate-90"></i>';
-                    const label = isSewa ? 'Mulai Sewa' : 'Batas Kembali';
 
-                    return `
-                        <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-300 transition group">
-                            <div class="mt-1 w-2 h-2 rounded-full ${isSewa ? 'bg-emerald-500' : 'bg-orange-500'} flex-shrink-0"></div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex justify-between items-start">
-                                    <p class="text-sm font-bold text-gray-800 truncate">${props.user_name}</p>
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded ${badgeColor}">
-                                        ${label}
-                                    </span>
-                                </div>
-                                <p class="text-xs text-gray-500 truncate mt-0.5"><i class="fa-solid fa-tent mr-1"></i> ${props.barang}</p>
+        // --- PERBAIKAN LOGIKA PENENTUAN TIPE ACARA ---
+        // Kita gunakan props.color yang dikirim dari controller (emerald/orange)
+        const isSewa = props.color === 'emerald';
+        
+        // Penentuan warna badge
+        const badgeColor = isSewa 
+            ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
+            : 'bg-orange-100 text-orange-700 border-orange-200';
+            
+        // Penentuan Label
+        const label = isSewa ? 'Mulai Sewa' : 'Batas Kembali';
 
-                                <div class="flex items-center justify-end mt-2">
-                                    <a href="/admin/rental/${e.id}/show" class="text-xs text-gray-500 hover:text-teal-600 font-medium transition">Lihat Detail &rarr;</a>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+        // Penentuan URL Detail (Diasumsikan ID Order ada di e.extendedProps.order_id atau e.id)
+        // Saya asumsikan ID order ada di e.extendedProps.order_id
+        const detailUrl = `/admin/orders/${props.order_id ?? e.id}`; 
+        
+        // Catatan: Jika Anda menggunakan /admin/rental/xxx/show, pastikan URL-nya sudah benar di route Anda.
+        
+        // --- HTML Output ---
+        return `
+            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-gray-300 transition group">
+                <div class="mt-1 w-2 h-2 rounded-full ${isSewa ? 'bg-emerald-500' : 'bg-orange-500'} flex-shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-start">
+                        <p class="text-sm font-bold text-gray-800 truncate">${props.user_name}</p>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${badgeColor}">
+                            ${label}
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-500 truncate mt-0.5"><i class="fa-solid fa-tent mr-1"></i> ${props.barang}</p>
+
+                    <div class="flex items-center justify-end mt-2">
+                        <a href="${detailUrl}" class="text-xs text-gray-500 hover:text-teal-600 font-medium transition">Lihat Detail &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
             } else {
                 dayEventsList.innerHTML = `
                     <div class="text-center py-8">

@@ -29,17 +29,18 @@ class BarangController extends Controller
     /**
      * Menyimpan barang baru ke database
      */
-    public function store(Request $request)
+public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_barang'    => 'required|string|max:255',
             'stok'           => 'required|integer|min:0',
             'harga_sewa'     => 'required|numeric|min:0',
-            'harga_2_malam'  => 'required|numeric|min:0',
-            'harga_3_malam'  => 'required|numeric|min:0',
+            // Pastikan ini nullable di validasi
+            'harga_2_malam'  => 'nullable|numeric|min:0', 
+            'harga_3_malam'  => 'nullable|numeric|min:0',
             'deskripsi'      => 'nullable|string',
             'gambar'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'status'         => 'required|in:tersedia,tidak tersedia',
+            'status'         => 'nullable|in:tersedia,tidak tersedia',
         ]);
 
         $path = null;
@@ -47,15 +48,21 @@ class BarangController extends Controller
             $path = $request->file('gambar')->store('barang', 'public');
         }
 
+        // --- Perbaikan Logic Harga Opsional ---
+        // Jika input dikirim sebagai string kosong ('') dari form, set menjadi null
+        $harga2Malam = empty($validated['harga_2_malam']) ? null : $validated['harga_2_malam'];
+        $harga3Malam = empty($validated['harga_3_malam']) ? null : $validated['harga_3_malam'];
+
         Barang::create([
             'nama_barang'    => $validated['nama_barang'],
             'stok'           => $validated['stok'],
-            'harga_sewa' => $validated['harga_sewa'],
-            'harga_2_malam' => $validated['harga_2_malam'],
-            'harga_3_malam' => $validated['harga_3_malam'],
+            'harga_sewa'     => $validated['harga_sewa'],
+            'harga_2_malam'  => $harga2Malam, // Menggunakan nilai yang sudah diolah
+            'harga_3_malam'  => $harga3Malam, // Menggunakan nilai yang sudah diolah
             'deskripsi'      => $validated['deskripsi'] ?? null,
             'gambar'         => $path,
-            'status'         => $validated['status'],
+            // Status akan otomatis di-set oleh Eloquent Model hook (static::saving)
+            'status'         => $validated['status'] ?? null,
         ]);
 
         return redirect()->route('admin.barang.index')->with('success', 'Barang berhasil ditambahkan!');
@@ -81,8 +88,8 @@ class BarangController extends Controller
             'nama_barang'    => 'required|string|max:255',
             'stok'           => 'required|integer|min:0',
             'harga_sewa'     => 'required|numeric|min:0',
-            'harga_2_malam'  => 'required|numeric|min:0',
-            'harga_3_malam'  => 'required|numeric|min:0',
+            'harga_2_malam'  => 'nullable|numeric|min:0',
+            'harga_3_malam'  => 'nullable|numeric|min:0',
             'deskripsi'      => 'nullable|string',
             'gambar'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status'         => 'required|in:tersedia,tidak tersedia',
@@ -97,15 +104,20 @@ class BarangController extends Controller
             $gambarPath = $request->file('gambar')->store('barang', 'public');
         }
 
+                // --- Perbaikan Logic Harga Opsional ---
+        // Jika input dikirim sebagai string kosong ('') dari form, set menjadi null
+        $harga2Malam = empty($validated['harga_2_malam']) ? null : $validated['harga_2_malam'];
+        $harga3Malam = empty($validated['harga_3_malam']) ? null : $validated['harga_3_malam'];
+
         $barang->update([
             'nama_barang'    => $validated['nama_barang'],
             'stok'           => $validated['stok'],
             'harga_sewa' => $validated['harga_sewa'],
-            'harga_2_malam' => $validated['harga_2_malam'],
-            'harga_3_malam' => $validated['harga_3_malam'],
+            'harga_2_malam' => $harga2Malam['harga_2_malam'],
+            'harga_3_malam' => $harga3Malam['harga_3_malam'],
             'deskripsi'      => $validated['deskripsi'] ?? null,
             'gambar'         => $gambarPath,
-            'status'         => $validated['status'],
+            'status'         => $validated['status'] ?? null,
         ]);
 
         return redirect()->route('admin.barang.index')->with('success', 'Data barang berhasil diperbarui!');

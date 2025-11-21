@@ -8,7 +8,7 @@
     <div class="flex justify-between items-center mb-8">
         <h2 class="text-3xl font-bold text-gray-800 tracking-tight">Daftar Barang</h2>
         <a href="{{ route('admin.barang.create') }}" 
-           class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-indigo-700 hover:scale-105 transition-all duration-300 ease-out">
+           class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-emerald-700 hover:scale-105 transition-all duration-300 ease-out">
            + Tambah Barang
         </a>
     </div>
@@ -71,10 +71,10 @@
 
                     <td class="py-4 px-6">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full 
-                            {{ $item->status == 'tersedia' 
+                            {{ $item->stok > 0 
                                 ? 'bg-green-100 text-green-700' 
-                                : 'bg-yellow-100 text-yellow-700' }}">
-                            {{ ucfirst($item->status) }}
+                                : 'bg-red-100 text-red-700' }}">
+                            {{ $item->stok > 0 ? 'Tersedia' : 'Tidak Tersedia' }}
                         </span>
                     </td>
 

@@ -31,6 +31,18 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
+    @php
+    $photo = null;
+
+    if(Auth::check()) {
+        $photo = Auth::user()->profile_photo
+            ? asset('storage/' . Auth::user()->profile_photo)
+            : "https://ui-avatars.com/api/?name=" 
+                . urlencode(Auth::user()->name) 
+                . "&background=random&color=fff&size=128";
+    }
+    @endphp
+
 
     <nav class="fixed left-0 w-full bg-white shadow-md py-3 px-8 z-50">
         <div class="flex justify-between items-center">
@@ -64,23 +76,53 @@
                                 Dashboard
                             </a>
                         @else
-                            <button id="userMenuButton" class="text-gray-700 hover:text-emerald-700 text-2xl focus:outline-none" aria-label="User Menu">
-                                <i class="fa-regular fa-user"></i>
-                            </button>
+                        <button id="userMenuButton"
+                            class="w-10 h-10 rounded-full border-2 border-gray-300 overflow-hidden hover:border-emerald-600 transition">
 
-                            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 border border-gray-100 z-50">
-                                <div class="px-4 py-2 border-b">
-                                    <p class="text-xs text-gray-500">Halo,</p>
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ Auth::user()->name }}</p>
-                                </div>
-                                <a href="{{ route('frontend.order.index') }}" class="block px-4 py-2 text-gray-700 hover:bg-emerald-50">Pesanan Saya</a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50">
-                                        Logout
-                                    </button>
-                                </form>
-                            </div>
+                            <img src="{{ $photo }}" class="w-full h-full object-cover">
+                        </button>
+
+
+
+    <div id="userDropdown"
+    class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-4 z-50">
+
+    <!-- Header user -->
+    <div class="flex items-center gap-3 px-4 pb-3 border-b">
+        <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200">
+            <img src="{{ $photo }}" class="w-full h-full object-cover">
+        </div>
+
+        <div>
+            <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name }}</p>
+            <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
+        </div>
+    </div>
+
+
+            <!-- Menu list -->
+            <a href="{{ route('profile.edit') }}"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 text-gray-700 transition">
+                <i class="fa-solid fa-user-pen w-5"></i>
+                Edit Profil
+            </a>
+
+            <a href="{{ route('frontend.order.index') }}"
+                class="flex items-center gap-3 px-4 py-3 hover:bg-emerald-50 text-gray-700 transition">
+                <i class="fa-solid fa-bag-shopping w-5"></i>
+                Pesanan Saya
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                    class="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 w-full text-left transition">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i>
+                    Logout
+                </button>
+            </form>
+        </div>
+
                         @endif
                     @else
                         <button id="guestMenuButton" class="text-gray-700 hover:text-emerald-700 text-2xl focus:outline-none" aria-label="Guest Menu">
@@ -186,27 +228,40 @@
 
 
     <script>
-        // === Dropdown User/Guest (Desktop) ===
+        // USER DROPDOWN
+        const userButton = document.getElementById("userMenuButton");
+        const userDropdown = document.getElementById("userDropdown");
 
-        // dropdown untuk user yang sudah login
-        const userButton = document.getElementById('userMenuButton');
-        const userDropdown = document.getElementById('userDropdown');
         if (userButton && userDropdown) {
-            userButton.addEventListener('click', (e) => {
-                e.stopPropagation(); // Mencegah event menyebar ke document
-                userDropdown.classList.toggle('hidden');
+            userButton.addEventListener("click", function (e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle("hidden");
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!userDropdown.contains(e.target)) {
+                    userDropdown.classList.add("hidden");
+                }
             });
         }
 
-        // dropdown untuk guest (belum login)
-        const guestButton = document.getElementById('guestMenuButton');
-        const guestDropdown = document.getElementById('guestDropdown');
+        // GUEST DROPDOWN
+        const guestButton = document.getElementById("guestMenuButton");
+        const guestDropdown = document.getElementById("guestDropdown");
+
         if (guestButton && guestDropdown) {
-            guestButton.addEventListener('click', (e) => {
-                e.stopPropagation(); // Mencegah event menyebar ke document
-                guestDropdown.classList.toggle('hidden');
+            guestButton.addEventListener("click", function (e) {
+                e.stopPropagation();
+                guestDropdown.classList.toggle("hidden");
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!guestDropdown.contains(e.target)) {
+                    guestDropdown.classList.add("hidden");
+                }
             });
         }
+
         
         // klik di luar dropdown => tutup menu
         document.addEventListener('click', function(e) {

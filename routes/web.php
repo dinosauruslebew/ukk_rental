@@ -28,6 +28,13 @@ Route::post('/logout', function (Request $request) {
     return redirect('/');
 })->name('logout')->middleware('auth');
 
+//edit profil
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});
+
+
 
 // ======================================
 // ============ FRONTEND AREA ===========
@@ -101,7 +108,6 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('barang', BarangController::class);
-
         Route::prefix('orders')->name('order.')->group(function () {
             Route::get('/', [AdminOrderController::class, 'index'])->name('index');
             Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');

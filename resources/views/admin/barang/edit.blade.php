@@ -32,12 +32,12 @@
         <div>
             <label class="block text-gray-700 mb-2 font-semibold {{ !$barang->harga_2_malam ? 'opacity-50 cursor-not-allowed' : '' }}">Harga 2 Malam</label>
             <input type="number" name="harga_2_malam" value="{{ old('harga_2_malam', $barang->harga_2_malam) }}"
-                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200" required>
+                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200">
         </div>
         <div>
             <label class="block text-gray-700 mb-2 font-semibold">Harga 3 Malam</label>
             <input type="number" name="harga_3_malam" value="{{ old('harga_sewa', $barang->harga_3_malam) }}"
-                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200" required>
+                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200">
         </div>
 
 
@@ -46,16 +46,6 @@
             <label class="block text-gray-700 mb-2 font-semibold">Deskripsi</label>
             <textarea name="deskripsi" rows="4"
                 class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200">{{ old('deskripsi', $barang->deskripsi) }}</textarea>
-        </div>
-
-
-            <!-- Status -->
-        <div>
-            <label class="block text-gray-700 mb-2 font-semibold">Status Barang</label>
-            <select name="status" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-teal-600 focus:border-transparent">
-                <option value="tersedia" {{ $barang->status == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                <option value="disewa" {{ $barang->status == 'disewa' ? 'selected' : '' }}>Disewa</option>
-            </select>
         </div>
 
         <div class="mb-6">
