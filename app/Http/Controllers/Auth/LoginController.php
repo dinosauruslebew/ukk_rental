@@ -6,21 +6,32 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 
-class AuthenticatedSessionController extends Controller
+class LoginController extends Controller
 {
-    /**
-     * Tampilkan halaman login.
-     */
-    public function create(): View
+    public function index()
     {
-        return view('auth.login');
+        return view('auth.login'); // pastikan file view-nya ada
     }
 
-    /**
-     * Proses login.
-     */
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -49,16 +60,12 @@ class AuthenticatedSessionController extends Controller
 
     }
 
-    /**
-     * Logout user.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
-
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }

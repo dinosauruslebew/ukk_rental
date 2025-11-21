@@ -38,26 +38,24 @@
                 ========================================
             -->
             <div class="mb-10 overflow-x-auto pb-2 no-scrollbar">
-                <div class="flex gap-2 md:gap-4 min-w-max">
-                    <!-- Tab 'All Products' -->
-                    <a href="{{ route('frontend.produk.index', ['category' => 'all']) }}"
-                       class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200
-                       {{ $activeCategory == 'all'
-                            ? 'bg-gray-900 text-white shadow-md'
-                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200' }}">
-                       All Products
-                    </a>
+            <div class="flex gap-2 md:gap-4 min-w-max">
 
-                    <!-- Loop Kategori dari Database -->
-                    @foreach($kategori as $cat)
-                        <a href="{{ route('frontend.produk.index', ['category' => $cat]) }}"
-                           class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 capitalize
-                           {{ $activeCategory == $cat
-                                ? 'bg-gray-900 text-white shadow-md'
-                                : 'text-gray-500 hover:text-gray-900 hover:bg-gray-200' }}">
-                           {{ $cat }}
-                        </a>
-                    @endforeach
+                <a href="{{ route('frontend.produk.index', ['category' => 'all']) }}"
+                class="px-5 py-2 rounded-full text-sm font-medium border border-gray-400
+                {{ $activeCategory == 'all' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-200' }}">
+                All Products
+                </a>
+
+                @foreach($kategori as $cat)
+                    <a href="{{ route('frontend.produk.index', ['category' => $cat]) }}"
+                    class="px-5 py-2 rounded-full text-sm font-medium capitalize border border-gray-400
+                    {{ $activeCategory == $cat ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-200' }}">
+                    {{ $cat }}
+                    </a>
+                @endforeach
+
+</div>
+
                 </div>
             </div>
 
@@ -72,12 +70,19 @@
                     <div class="bg-white p-4 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 group relative">
 
                         <!-- Gambar Produk -->
-                        <div class="relative bg-gray-100 rounded-[1.5rem] overflow-hidden aspect-square mb-4">
+                        <div class="relative bg-gray-100 rounded-[1.5rem] overflow-hidden aspect-square mb-4 {{ $item->stok == 0 ? 'opacity-50 grayscale' : '' }}">
                              <!-- Link Full Cover ke Detail -->
-                            <a href="{{ route('frontend.produk.detail', $item) }}" class="absolute inset-0 z-10"></a>
+                            @if($item->stok > 0)
+                                <a href="{{ route('frontend.produk.detail', $item) }}" class="absolute inset-0 z-10"></a>
+                            @endif
 
                             <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_barang }}"
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                                 @if($item->stok == 0)
+                                    <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                        Stok Habis
+                                    </div>
+                                @endif
 
                             <!-- Tombol Panah Kecil (Hiasan/Link ke Detail) -->
                             <div class="absolute bottom-3 right-3 bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm z-20 pointer-events-none group-hover:bg-gray-900 group-hover:text-white transition-colors">

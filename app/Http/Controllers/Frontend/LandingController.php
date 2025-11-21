@@ -19,7 +19,11 @@ class LandingController extends Controller
         // Kita ambil semua barang, diurutkan berdasarkan yang terbaru
         // File landing.blade.php kamu nanti yang akan mengurus
         // mana yang 'New Arrival' dan mana yang 'Product'
-        $barang = Barang::orderBy('created_at', 'desc')->get();
+        $barang = Barang::where('stok', '>', 0)
+                ->where('status', 'tersedia')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
 
         // 2. Kirim data barang ke view 'landing'
         // PERUBAHAN DI SINI:

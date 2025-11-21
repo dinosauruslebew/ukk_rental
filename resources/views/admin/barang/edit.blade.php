@@ -29,6 +29,17 @@
             <input type="number" name="harga_sewa" value="{{ old('harga_sewa', $barang->harga_sewa) }}"
                 class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200" required>
         </div>
+        <div>
+            <label class="block text-gray-700 mb-2 font-semibold {{ !$barang->harga_2_malam ? 'opacity-50 cursor-not-allowed' : '' }}">Harga 2 Malam</label>
+            <input type="number" name="harga_2_malam" value="{{ old('harga_2_malam', $barang->harga_2_malam) }}"
+                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200" required>
+        </div>
+        <div>
+            <label class="block text-gray-700 mb-2 font-semibold">Harga 3 Malam</label>
+            <input type="number" name="harga_3_malam" value="{{ old('harga_sewa', $barang->harga_3_malam) }}"
+                class="w-full border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 transition duration-200" required>
+        </div>
+
 
          <!-- Deskripsi -->
         <div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\frontend;
+namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
@@ -16,10 +16,6 @@ class CartController extends Controller
 
         $totalKeseluruhan = 0;
         foreach ($cart as $item) {
-            // --- PERBAIKAN ERROR DI SINI ---
-            // Kita cek, kalau ada 'subtotal' (sistem baru) pakai itu.
-            // Kalau nggak ada, kita cari 'total_harga' (sistem lama).
-            // Kalau nggak ada juga, anggap aja 0.
             $totalKeseluruhan += $item['subtotal'] ?? $item['total_harga'] ?? 0;
         }
 
@@ -29,8 +25,7 @@ class CartController extends Controller
         ]);
     }
 
-    // --- FUNGSI DIROMBAK: Paham Kuantitas ---
-// ... (sisa file CartController.php kamu SAMA PERSIS kayak sebelumnya) ...
+
     public function addToCart(Request $request, $id_barang)
     {
         // 1. Validasi Input

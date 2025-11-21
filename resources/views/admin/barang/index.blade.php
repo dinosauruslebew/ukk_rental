@@ -83,8 +83,8 @@
                         <div class="flex justify-center gap-3">
                             {{-- Tombol Edit --}}
                             <a href="{{ route('admin.barang.edit', $item) }}" 
-                               class="inline-block bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-300 ease-out">
-                                Edit
+                               class="text-white px-4 py-2 hover:scale-105 transition-all duration-300 ease-out">
+                               <i class="fa-regular fa-pen-to-square" style="color: black;"></i>
                             </a>
 
                             {{-- Tombol Hapus --}}
@@ -92,8 +92,8 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" 
-                                        class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 hover:scale-105 transition-all duration-300 ease-out delete-btn">
-                                    Hapus
+                                        class="px-4 py-2 hover:scale-105 transition-all duration-300 ease-out delete-btn">
+                                        <i class="fa-solid fa-trash" style="color:black;"></i>
                                 </button>
                             </form>
                         </div>

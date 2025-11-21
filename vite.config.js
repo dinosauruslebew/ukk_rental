@@ -8,4 +8,12 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+        rollupOptions: {
+            // Ensure the same inputs are used for the build
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+        },
+    },
 });

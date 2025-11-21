@@ -3,7 +3,7 @@
 @section('content')
 
     <!-- hero section (Home) -->
-  <section id="home" class="relative w-full flex justify-center items-center pt-24 px-6 scroll-mt-20">
+  <section id="home" class="relative w-full flex justify-center items-center pt-10 px-6 scroll-mt-20">
   <div class="relative w-full max-w-7xl mx-auto"
        x-data="{ active: 0, images: [
          './utama.jpg',
@@ -80,7 +80,7 @@
     </section>
 
         <!-- New Arrival Section (BARU - Sesuai Referensi image_bada25.jpg) -->
-    <section id="new-arrivals" class="mt-16 mb-20 px-6">
+    <section id="products" class="mt-16 mb-20 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-3xl font-bold text-gray-900">New Arrival</h3>
@@ -91,9 +91,12 @@
 
             </div>
 
-            <!-- Grid (Ambil 3 barang terbaru dari $barang) -->
+            <!-- Grid (Ambil 4 barang terbaru dari $barang) -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                @forelse($barang->sortByDesc('created_at')->take(4) as $item)
+                @forelse($barang->where('stok', '>', 0)
+               ->where('status', 'tersedia')
+               ->sortByDesc('created_at')
+               ->take(4) as $item)
                      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100">
                         <a href="{{ route('frontend.produk.detail', $item) }}">
                             <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_barang }}"
@@ -132,23 +135,78 @@
         </div>
     </section>
 
-    <!-- Promo Section (BARU - Sesuai Referensi image_bada25.jpg) -->
-    <section id="promo" class="mt-16 px-6">
-        <div class="max-w-7xl mx-auto bg-emerald-50 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-lg border border-emerald-100">
-            <div class="md:w-1/2 text-center md:text-left mb-6 md:mb-0">
-                <span class="text-emerald-600 font-semibold text-sm uppercase">Weekend Special</span>
-                <h3 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-2">Rent 2 or more items<br>and get <span class="text-emerald-600">20% OFF!</span></h3>
-                <p class="text-gray-600 mt-3 mb-6">Gunakan kode promo 'WEEKEND20' saat checkout.</p>
-                <a href="#products" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition shadow-lg hover:shadow-emerald-300/50">
-                    Shop Now
+<!-- Paket Hemat Section -->
+<section id="paket-hemat" class="mt-16 px-6">
+    <div class="max-w-7xl mx-auto bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-gray-100">
+
+        <div class="text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">
+                Coba <span class="text-emerald-600">Paket Lebih Hemat</span>
+            </h2>
+            <p class="text-gray-600 mt-3 max-w-2xl mx-auto">
+                Pilihan paket lengkap untuk kebutuhan camping kamu.  
+                Lebih murah daripada sewa satuan!
+            </p>
+        </div>
+
+        <!-- Grid 3 macam paket -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Paket 1 -->
+            <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 class="text-xl font-semibold text-emerald-700">Paket Solo</h3>
+                <p class="text-gray-600 mt-2 text-sm">Cocok buat solo hiking atau short trip.</p>
+
+                <ul class="mt-4 space-y-2 text-gray-700 text-sm">
+                    <li>• 1 Tenda Single</li>
+                    <li>• 1 Sleeping Bag</li>
+                    <li>• 1 Kompor Portable</li>
+                </ul>
+
+                <a href="" 
+                   class="mt-6 block bg-emerald-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                    Lihat Paket
                 </a>
             </div>
-            <div class="md:w-1/2 flex justify-center md:justify-end">
-                <!-- Ganti gambar ini dengan gambar promo kamu -->
-                <img src="/kompor.jpeg" alt="Promo Tenda dan Ransel" class="max-h-60 rounded-lg shadow-lg">
+
+            <!-- Paket 2 -->
+            <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 class="text-xl font-semibold text-emerald-700">Paket Duo</h3>
+                <p class="text-gray-600 mt-2 text-sm">Lebih hemat buat camping berdua.</p>
+
+                <ul class="mt-4 space-y-2 text-gray-700 text-sm">
+                    <li>• 1 Tenda Double</li>
+                    <li>• 2 Sleeping Bag</li>
+                    <li>• 1 Nesting</li>
+                </ul>
+
+                <a href="" 
+                   class="mt-6 block bg-emerald-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                    Lihat Paket
+                </a>
             </div>
+
+            <!-- Paket 3 -->
+            <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow hover:shadow-lg transition">
+                <h3 class="text-xl font-semibold text-emerald-700">Paket Keluarga</h3>
+                <p class="text-gray-600 mt-2 text-sm">Buat family trip atau outing bareng teman.</p>
+
+                <ul class="mt-4 space-y-2 text-gray-700 text-sm">
+                    <li>• 1 Tenda Family</li>
+                    <li>• 4 Sleeping Bag</li>
+                    <li>• Kompor + Peralatan Masak</li>
+                </ul>
+
+                <a href="" 
+                   class="mt-6 block bg-emerald-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
+                    Lihat Paket
+                </a>
+            </div>
+
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!-- Review Section (LAMA - Tapi dipertahankan) -->
     <section id="review" class="mt-16 py-16 bg-white px-6 scroll-mt-20">
@@ -231,13 +289,10 @@
                         Dari sebuah garasi kecil dengan beberapa tenda dan ransel, kami tumbuh bersama komunitas pendaki. Misi kami sederhana: menyediakan akses mudah ke perlengkapan outdoor berkualitas tinggi bagi semua orang, dari pemula hingga petualang berpengalaman.
                     </p>
                 </div>
-                <a href="#" class="inline-block mt-8 bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition shadow-lg hover:shadow-emerald-300/50">
-                    Learn More About Us
-                </a>
             </div>
 
             <!-- Kanan: Gambar History (Lekuk Custom) -->
-            <div class="overflow-hidden shadow-xl rounded-2xl rounded-tr-[6rem] rounded-bl-[6rem]">
+            <div class="overflow-hidden shadow-xl rounded-2xl rounded-tr-[6rem] rounded-bl-[6rem] mt-10">
                 <img src="/utama.jpg" alt="Sejarah Jengki Adventure" class="w-full h-80 object-cover transition-transform duration-300 hover:scale-105">
             </div>
         </div>

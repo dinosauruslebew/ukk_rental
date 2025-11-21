@@ -78,7 +78,9 @@
                                 <!-- Opsi 1 Malam -->
                                 <label class="cursor-pointer flex-1">
                                     <input type="radio" name="durasi" value="1" class="peer hidden" checked onchange="updatePrice()">
-                                    <div class="text-center py-2 rounded-xl border border-gray-200 bg-white text-gray-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition hover:border-emerald-400 shadow-sm">
+                                    <div class="text-center py-2 rounded-xl border border-gray-200 
+                                                bg-white text-gray-600 peer-checked:bg-emerald-600
+                                                peer-checked:text-white peer-checked:border-emerald-600 transition hover:border-emerald-400 shadow-sm">
                                         <span class="block text-sm font-bold">1 Malam</span>
                                         <span class="text-[10px]">Rp{{ number_format($barang->harga_sewa/1000, 0) }}k</span>
                                     </div>
@@ -86,27 +88,56 @@
 
                                 <!-- Opsi 2 Malam -->
                                 <label class="cursor-pointer flex-1 {{ !$barang->harga_2_malam ? 'opacity-50 cursor-not-allowed' : '' }}">
-                                    <input type="radio" name="durasi" value="2" class="peer hidden" onchange="updatePrice()" {{ !$barang->harga_2_malam ? 'disabled' : '' }}>
-                                    <div class="text-center py-2 rounded-xl border border-gray-200 bg-white text-gray-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition {{ $barang->harga_2_malam ? 'hover:border-emerald-400' : 'bg-gray-50' }} shadow-sm">
+                                    <input type="radio"
+                                        name="durasi"
+                                        value="2"
+                                        class="peer hidden"
+                                        onchange="updatePrice()"
+                                        {{ !$barang->harga_2_malam ? 'disabled' : '' }}>
+                                    
+                                    <div class="text-center py-2 rounded-xl border border-gray-200
+                                                bg-white text-gray-600 
+                                                peer-checked:bg-emerald-600 peer-checked:text-white
+                                                peer-checked:border-emerald-600 transition
+                                                {{ $barang->harga_2_malam ? 'hover:border-emerald-400' : 'bg-gray-100 border-gray-300' }}
+                                                shadow-sm">
                                         <span class="block text-sm font-bold">2 Malam</span>
                                         <span class="text-[10px]">
-                                            @if($barang->harga_2_malam) Rp{{ number_format($barang->harga_2_malam/1000, 0) }}k
-                                            @else <span class="text-gray-400">N/A</span> @endif
+                                            @if($barang->harga_2_malam)
+                                                Rp{{ number_format($barang->harga_2_malam / 1000, 0) }}k
+                                            @else
+                                                <span class="text-gray-400">N/A</span>
+                                            @endif
                                         </span>
                                     </div>
                                 </label>
 
                                 <!-- Opsi 3 Malam -->
                                 <label class="cursor-pointer flex-1 {{ !$barang->harga_3_malam ? 'opacity-50 cursor-not-allowed' : '' }}">
-                                    <input type="radio" name="durasi" value="3" class="peer hidden" onchange="updatePrice()" {{ !$barang->harga_3_malam ? 'disabled' : '' }}>
-                                    <div class="text-center py-2 rounded-xl border border-gray-200 bg-white text-gray-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition {{ $barang->harga_3_malam ? 'hover:border-emerald-400' : 'bg-gray-50' }} shadow-sm">
+                                    <input type="radio"
+                                        name="durasi"
+                                        value="3"
+                                        class="peer hidden"
+                                        onchange="updatePrice()"
+                                        {{ !$barang->harga_3_malam ? 'disabled' : '' }}>
+                                    
+                                    <div class="text-center py-2 rounded-xl border border-gray-200
+                                                bg-white text-gray-600 
+                                                peer-checked:bg-emerald-600 peer-checked:text-white
+                                                peer-checked:border-emerald-600 transition
+                                                {{ $barang->harga_3_malam ? 'hover:border-emerald-400' : 'bg-gray-100 border-gray-300' }}
+                                                shadow-sm">
                                         <span class="block text-sm font-bold">3 Malam</span>
                                         <span class="text-[10px]">
-                                            @if($barang->harga_3_malam) Rp{{ number_format($barang->harga_3_malam/1000, 0) }}k
-                                            @else <span class="text-gray-400">N/A</span> @endif
+                                            @if($barang->harga_3_malam)
+                                                Rp{{ number_format($barang->harga_3_malam / 1000, 0) }}k
+                                            @else
+                                                <span class="text-gray-400">N/A</span>
+                                            @endif
                                         </span>
                                     </div>
                                 </label>
+
                             </div>
                         </div>
 

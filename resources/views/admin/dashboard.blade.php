@@ -46,7 +46,7 @@
         box-shadow: none !important;
     }
 
-    /* HILANGKAN BORDER TABLE BIAR BERSIH (KAYA DI GAMBAR) */
+    /* HILANGKAN BORDER TABLE BIAR BERSIH */
     .fc-theme-standard td,
     .fc-theme-standard th,
     .fc-theme-standard .fc-scrollgrid {
@@ -265,7 +265,7 @@
                                     <td class="py-4 px-6 text-gray-500 text-xs">{{ $order->created_at->format('d M Y') }}</td>
                                     <td class="py-4 px-6">
                                         <!-- Badge Status (dari order) -->
-                                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide border
+                                        <span class="px-3 py-1.5 rounded-full text-[10px] font-bold capitalize tracking-wide whitespace-nowrap border
                                         {{ $order->status == 'selesai' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200' }}">
                                             {{ $order->status }}
                                         </span>
