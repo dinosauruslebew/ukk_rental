@@ -52,7 +52,8 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|string|in:dikonfirmasi,disewa,selesai,dibatalkan',
+            // Tambahkan 'menunggu konfirmasi' dan status lain yang mungkin diubah manual
+            'status' => 'required|string|in:menunggu konfirmasi,dikonfirmasi,disewa,selesai,dibatalkan',
         ]);
 
         $newStatus = $request->status;
@@ -61,8 +62,10 @@ class OrderController extends Controller
         // --- LOGIKA STOK (BARU & LENGKAP!) ---
 
         // 1. Jika pesanan DIBATALKAN (dan sebelumnya BELUM batal/selesai)
-        //    (Stok dikunci, tapi dibatalin -> Balikin!)
+        // (Stok dikunci/disewa, Balikin!)
         if ($newStatus == 'dibatalkan' && !in_array($oldStatus, ['dibatalkan', 'selesai'])) {
+            // Perlu memuat relasi items jika belum dimuat, tapi di sini diasumsikan sudah ada dari model Order/relasi
+            $order->loadMissing('items.barang'); 
             foreach ($order->items as $item) {
                 if ($item->barang) {
                     $item->barang->increment('stok', $item->kuantitas);
@@ -70,10 +73,10 @@ class OrderController extends Controller
             }
         }
 
-        // 2. (INI PERBAIKAN DARI KAMU!)
-        //    Jika pesanan DISELESAIKAN (dan sebelumnya BELUM selesai/batal)
-        //    (Barang udah kembali -> Balikin!)
+        // 2. Jika pesanan DISELESAIKAN secara manual melalui updateStatus (dan sebelumnya BELUM selesai/batal)
+        // (Barang udah kembali -> Balikin!)
         elseif ($newStatus == 'selesai' && !in_array($oldStatus, ['selesai', 'dibatalkan'])) {
+            $order->loadMissing('items.barang');
             foreach ($order->items as $item) {
                 if ($item->barang) {
                     $item->barang->increment('stok', $item->kuantitas);
@@ -85,5 +88,33 @@ class OrderController extends Controller
         $order->update(['status' => $newStatus]);
 
         return redirect()->route('admin.order.show', $order->id)->with('success', 'Status pesanan berhasil diperbarui!');
+    }
+
+    /**
+     * Memproses pengembalian barang dan mengubah status pesanan menjadi 'selesai'.
+     * Endpoint khusus ini dipicu oleh route 'admin.order.processReturn'.
+     */
+    public function processReturn(Request $request, Order $order)
+    {
+        // 1. Validasi status harus 'disewa' untuk diproses pengembalian.
+        if ($order->status !== 'disewa') {
+            return redirect()->route('admin.order.show', $order->id)
+                ->with('error', 'Gagal memproses pengembalian. Pesanan harus dalam status "Disewa".');
+        }
+
+        // 2. Kembalikan stok barang ke inventori
+        $order->loadMissing('items.barang');
+        foreach ($order->items as $item) {
+            if ($item->barang) {
+                // Mengembalikan stok berdasarkan kuantitas yang disewa
+                $item->barang->increment('stok', $item->kuantitas);
+            }
+        }
+
+        // 3. Update status pesanan menjadi 'selesai'
+        $order->update(['status' => 'selesai']);
+
+        return redirect()->route('admin.order.show', $order->id)
+            ->with('success', 'Pengembalian barang berhasil diproses! Status pesanan diubah menjadi Selesai dan stok telah dikembalikan.');
     }
 }

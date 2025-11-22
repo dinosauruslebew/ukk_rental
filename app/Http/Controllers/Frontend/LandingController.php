@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
+use App\Models\Paket;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
@@ -24,12 +25,16 @@ class LandingController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+        // Ambil data paket beserta itemnya
+        $pakets = Paket::with(['items'])
+                        ->orderBy('harga_paket', 'asc')
+                        ->get();
 
-        // 2. Kirim data barang ke view 'landing'
-        // PERUBAHAN DI SINI:
+        // Kirim data barang dan paket ke view 'frontend.landing'
         // Kita panggil view 'landing' yang ada di dalam folder 'Frontend'
         return view('frontend.landing', [
-            'barang' => $barang
+            'barang' => $barang,
+            'pakets' => $pakets,
         ]);
     }
 }
