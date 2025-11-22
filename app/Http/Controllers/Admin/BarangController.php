@@ -80,48 +80,49 @@ public function store(Request $request)
     /**
      * Mengupdate data barang
      */
-    public function update(Request $request, $id)
-    {
-        $barang = Barang::findOrFail($id);
+  public function update(Request $request, $id_barang)
+{
+    $barang = Barang::findOrFail($id_barang);
 
-        $validated = $request->validate([
-            'nama_barang'    => 'required|string|max:255',
-            'stok'           => 'required|integer|min:0',
-            'harga_sewa'     => 'required|numeric|min:0',
-            'harga_2_malam'  => 'nullable|numeric|min:0',
-            'harga_3_malam'  => 'nullable|numeric|min:0',
-            'deskripsi'      => 'nullable|string',
-            'gambar'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'status'         => 'required|in:tersedia,tidak tersedia',
-        ]);
+    $validated = $request->validate([
+        'nama_barang'    => 'required|string|max:255',
+        'stok'           => 'required|integer|min:0',
+        'harga_sewa'     => 'required|numeric|min:0',
+        'harga_2_malam'  => 'nullable|numeric|min:0',
+        'harga_3_malam'  => 'nullable|numeric|min:0',
+        'deskripsi'      => 'nullable|string',
+        'gambar'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        'status'         => 'required|in:tersedia,tidak tersedia',
+    ]);
 
-        $gambarPath = $barang->gambar;
+    // Gambar
+    $gambarPath = $barang->gambar;
 
-        if ($request->hasFile('gambar')) {
-            if ($gambarPath && Storage::disk('public')->exists($gambarPath)) {
-                Storage::disk('public')->delete($gambarPath);
-            }
-            $gambarPath = $request->file('gambar')->store('barang', 'public');
+    if ($request->hasFile('gambar')) {
+        if ($gambarPath && Storage::disk('public')->exists($gambarPath)) {
+            Storage::disk('public')->delete($gambarPath);
         }
-
-                // --- Perbaikan Logic Harga Opsional ---
-        // Jika input dikirim sebagai string kosong ('') dari form, set menjadi null
-        $harga2Malam = empty($validated['harga_2_malam']) ? null : $validated['harga_2_malam'];
-        $harga3Malam = empty($validated['harga_3_malam']) ? null : $validated['harga_3_malam'];
-
-        $barang->update([
-            'nama_barang'    => $validated['nama_barang'],
-            'stok'           => $validated['stok'],
-            'harga_sewa' => $validated['harga_sewa'],
-            'harga_2_malam' => $harga2Malam['harga_2_malam'],
-            'harga_3_malam' => $harga3Malam['harga_3_malam'],
-            'deskripsi'      => $validated['deskripsi'] ?? null,
-            'gambar'         => $gambarPath,
-            'status'         => $validated['status'] ?? null,
-        ]);
-
-        return redirect()->route('admin.barang.index')->with('success', 'Data barang berhasil diperbarui!');
+        $gambarPath = $request->file('gambar')->store('barang', 'public');
     }
+
+    // Harga opsional → kosong = null
+    $harga2 = $validated['harga_2_malam'] ?? null;
+    $harga3 = $validated['harga_3_malam'] ?? null;
+
+    $barang->update([
+        'nama_barang'    => $validated['nama_barang'],
+        'stok'           => $validated['stok'],
+        'harga_sewa'     => $validated['harga_sewa'],
+        'harga_2_malam'  => $harga2,
+        'harga_3_malam'  => $harga3,
+        'deskripsi'      => $validated['deskripsi'] ?? null,
+        'gambar'         => $gambarPath,
+        'status'         => $validated['status'],
+    ]);
+
+    return redirect()->route('admin.barang.index')
+        ->with('success', 'Data barang berhasil diperbarui!');
+}
 
     /**
      * Menghapus barang

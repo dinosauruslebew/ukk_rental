@@ -40,6 +40,16 @@ class Barang extends Model
             }
         });
     }
+
+    // paket
+public function paket(){
+        return $this->belongsToMany(Paket::class, 'paket_barang', 'barang_id', 'paket_id')
+                    ->withPivot('qty')->withTimestamps();
+    }
+
+    public function rentals(){
+        return $this->hasMany(Rental::class);
+    }
 }
 
 

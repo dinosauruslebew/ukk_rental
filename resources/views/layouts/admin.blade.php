@@ -30,6 +30,12 @@
                <span>Barang</span>
             </a>
 
+            <a href="{{ route('admin.paket.index') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-teal-900 {{ request()->routeIs('admin.rentals.*') ? 'bg-teal-900' : '' }}">
+               <i class="fa-solid fa-box text-lg"></i>
+               <span>Paket</span>
+            </a>
+
             <a href="{{ route('admin.order.index') }}"
                class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-teal-900 {{ request()->routeIs('admin.rentals.*') ? 'bg-teal-900' : '' }}">
                <i class="fa-solid fa-file-contract text-lg"></i>
@@ -91,7 +97,7 @@
         <div class="bg-white rounded-2xl shadow-xl p-8 text-center animate-fadeIn relative max-w-sm w-full">
             <h2 class="text-2xl font-bold text-teal-800 mb-2">Selamat datang, Admin! 👋</h2>
             <p class="text-gray-600 mb-4">
-                {{ now()->translatedFormat('l, d F Y • H:i') }}
+                {{ now('Asia/Jakarta')->translatedFormat('l, d F Y • H:i') }}
             </p>
             <p class="text-gray-700">Semoga hari ini produktif 💪</p>
 

@@ -56,7 +56,6 @@
                 <li><a href="/#products" class="hover:text-emerald-600 transition">Products</a></li>
                 <li><a href="/#review" class="hover:text-emerald-600 transition">Review</a></li>
                 <li><a href="/#gallery" class="hover:text-emerald-600 transition">Gallery</a></li>
-                <li><a href="/#history" class="hover:text-emerald-600 transition">History</a></li>
                 <li><a href="/#rules" class="hover:text-emerald-600 transition">Rules</a></li>
             </ul>
 
@@ -153,9 +152,7 @@
                 <li><a href="/#products" class="block py-2 text-gray-700 hover:text-emerald-600 font-semibold transition">Products</a></li>
                 <li><a href="/#review" class="block py-2 text-gray-700 hover:text-emerald-600 font-semibold transition">Review</a></li>
                 <li><a href="/#gallery" class="block py-2 text-gray-700 hover:text-emerald-600 font-semibold transition">Gallery</a></li>
-                <li><a href="/#history" class="block py-2 text-gray-700 hover:text-emerald-600 font-semibold transition">History</a></li>
                 <li><a href="/#rules" class="block py-2 text-gray-700 hover:text-emerald-600 font-semibold transition">Rules</a></li>
-
                 <li class="w-full border-t border-gray-200 my-4"></li>
 
                 @auth

@@ -54,6 +54,12 @@ Route::prefix('produk')->name('frontend.produk.')->group(function () {
     Route::get('/{barang:id_barang}', [ProductController::class, 'show'])->name('detail');
 });
 
+        // Paket
+        Route::prefix('paket')->name('frontend.paket.')->group(function () {
+            Route::get('/', [ProductController::class, 'index'])->name('index');
+            Route::get('/{paket:id_paket}', [ProductController::class, 'show'])->name('detail');
+        });
+
 // ==========================
 // ========== CART ==========
 // ==========================
@@ -67,6 +73,9 @@ Route::prefix('cart')->name('cart.')->group(function () {
 // Tombol "Sewa Sekarang"
 Route::post('/rental/now/{id_barang}', [CartController::class, 'rentNow'])
      ->name('cart.rental.now');
+
+Route::post('/cart/add-paket/{id_paket}', [CartController::class, 'addPaket'])
+    ->name('cart.addPaket');
 
 // ============================================
 // ============ CHECKOUT & PESANAN ============
@@ -99,18 +108,31 @@ Route::middleware('auth')->group(function () {
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PaketController;
 
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
+        // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        // Barang
         Route::resource('barang', BarangController::class);
+
+        // Orders
         Route::prefix('orders')->name('order.')->group(function () {
             Route::get('/', [AdminOrderController::class, 'index'])->name('index');
             Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
             Route::patch('/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('updateStatus');
         });
+
+        // Paket
+        Route::resource('paket', PaketController::class);
+
+        // admin/orders/{order} sudah ada show; tambahkan route patch untuk proses return
+        Route::patch('/orders/{order}/return', [\App\Http\Controllers\Admin\OrderController::class, 'processReturn'])->name('admin.order.processReturn');
+
+
     });

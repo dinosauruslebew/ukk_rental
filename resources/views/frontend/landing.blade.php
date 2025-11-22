@@ -4,6 +4,9 @@
 
     <!-- hero section (Home) -->
   <section id="home" class="relative w-full flex justify-center items-center pt-10 px-6 scroll-mt-20">
+    {{-- <!-- Gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-b from-amber-50 to-lime-50 z-0"></div> --}}
+
   <div class="relative w-full max-w-7xl mx-auto"
        x-data="{ active: 0, images: [
          './utama.jpg',
@@ -136,75 +139,158 @@
     </section>
 
 <!-- Paket Hemat Section -->
-<section id="paket-hemat" class="mt-16 px-6">
-    <div class="max-w-7xl mx-auto bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-gray-100">
+<section id="paket-hemat-promo" class="py-12 px-2 md:px-4">
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fbee; /* Soft, light background */
+        }
+        .package-card {
+            transition: all 0.3s ease-in-out;
+            padding: 1.5rem; /* Reduced padding */
+        }
+        .package-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 20px -5px rgba(16, 185, 129, 0.2);
+        }
+        /* Custom gradient for the Duo package highlight */
+        .highlight-gradient {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%); /* Darker, more compact gradient */
+        }
+    </style>
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl p-6 md:p-8 shadow-xl border-2 border-emerald-100">
 
         <div class="text-center mb-10">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">
-                Coba <span class="text-emerald-600">Paket Lebih Hemat</span>
+            <span class="inline-block bg-green-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-widest">
+                Paket Terbaik & Termurah
+            </span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-3 leading-snug">
+                Pilih <span class="text-emerald-600">Paket Camping Hemat</span> Kami
             </h2>
-            <p class="text-gray-600 mt-3 max-w-2xl mx-auto">
-                Pilihan paket lengkap untuk kebutuhan camping kamu.  
-                Lebih murah daripada sewa satuan!
+            <p class="text-gray-500 mt-2 max-w-2xl mx-auto text-base">
+                Mulai petualangan Anda dengan paket bundling yang paling sesuai dengan kebutuhan dan budget.
             </p>
         </div>
 
-        <!-- Grid 3 macam paket -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Grid 3 macam paket Promosi -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <!-- Paket 1 -->
-            <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-semibold text-emerald-700">Paket Solo</h3>
-                <p class="text-gray-600 mt-2 text-sm">Cocok buat solo hiking atau short trip.</p>
-
-                <ul class="mt-4 space-y-2 text-gray-700 text-sm">
-                    <li>• 1 Tenda Single</li>
-                    <li>• 1 Sleeping Bag</li>
-                    <li>• 1 Kompor Portable</li>
-                </ul>
-
-                <a href="" 
-                   class="mt-6 block bg-emerald-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                    Lihat Paket
+            <!-- Paket 1: Solo/Minimalis (Sesuai data Camping Paket 1) -->
+            <div class="package-card bg-emerald-50 rounded-xl shadow-lg border border-emerald-200 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800">PAKET 1</h3>
+                    <p class="text-gray-500 mt-1 text-sm">Minimalis untuk 1-2 orang</p>
+                    
+                    <div class="my-4">
+                        <p class="text-3xl font-extrabold text-emerald-600">Rp 30.000</p>
+                        <p class="text-xs text-gray-600">Per hari</p>
+                    </div>
+                    
+                    <ul class="mt-3 space-y-1 text-gray-700 text-sm">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Tenda Kap 2-3 DL
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Matras 2 PCS
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Lampu Tenda 1 PCS
+                        </li>
+                    </ul>
+                </div>
+                
+                <a href="#" 
+                    class="mt-4 block bg-emerald-600 text-white text-center py-2.5 rounded-lg font-semibold hover:bg-emerald-700 transition duration-300 text-sm">
+                    Pilih Paket Ini
                 </a>
             </div>
 
-            <!-- Paket 2 -->
-            <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-semibold text-emerald-700">Paket Duo</h3>
-                <p class="text-gray-600 mt-2 text-sm">Lebih hemat buat camping berdua.</p>
+            <!-- Paket 3: Duo/Couple (Highlight, Sesuai data Camping Paket 3) -->
+            <div class="package-card highlight-gradient rounded-xl shadow-2xl relative border-4 border-yellow-300 flex flex-col justify-between">
+                <!-- Badge Populer -->
+                <div class="absolute top-0 right-0 -mt-3 -mr-3 bg-yellow-400 text-gray-900 text-xs font-black uppercase px-3 py-1 rounded-full shadow-md transform rotate-2">
+                    Paling Laris
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold text-white pt-2">PAKET 3</h3>
+                    <p class="text-emerald-200 mt-1 text-sm">Lengkap untuk petualangan berdua</p>
 
-                <ul class="mt-4 space-y-2 text-gray-700 text-sm">
-                    <li>• 1 Tenda Double</li>
-                    <li>• 2 Sleeping Bag</li>
-                    <li>• 1 Nesting</li>
-                </ul>
-
-                <a href="" 
-                   class="mt-6 block bg-emerald-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                    Lihat Paket
+                    <div class="my-4">
+                        <p class="text-4xl font-extrabold text-yellow-300">Rp 75.000</p>
+                        <p class="text-xs text-white">Per hari</p>
+                    </div>
+                    
+                    <ul class="mt-3 space-y-1 text-white text-sm">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-yellow-300 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Tenda Kap 2-3 DL
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-yellow-300 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Tas Carrier + RC
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-yellow-300 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Sleeping Bag & Matras (x2)
+                        </li>
+                    </ul>
+                </div>
+                
+                <a href="#" 
+                    class="mt-4 block bg-yellow-400 text-emerald-800 text-center py-2.5 rounded-lg font-extrabold shadow-md hover:bg-yellow-300 transition duration-300 text-sm">
+                    PESAN SEKARANG!
                 </a>
             </div>
 
-            <!-- Paket 3 -->
-            <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-xl shadow hover:shadow-lg transition">
-                <h3 class="text-xl font-semibold text-emerald-700">Paket Keluarga</h3>
-                <p class="text-gray-600 mt-2 text-sm">Buat family trip atau outing bareng teman.</p>
+            <!-- Paket 4: Rombongan (Sesuai data Camping Paket 4) -->
+            <div class="package-card bg-emerald-50 rounded-xl shadow-lg border border-emerald-200 flex flex-col justify-between">
+                 <div>
+                    <h3 class="text-xl font-bold text-gray-800">PAKET 4</h3>
+                    <p class="text-gray-500 mt-1 text-sm">Komplit untuk rombongan 4 orang</p>
 
-                <ul class="mt-4 space-y-2 text-gray-700 text-sm">
-                    <li>• 1 Tenda Family</li>
-                    <li>• 4 Sleeping Bag</li>
-                    <li>• Kompor + Peralatan Masak</li>
-                </ul>
+                    <div class="my-4">
+                        <p class="text-3xl font-extrabold text-emerald-600">Rp 115.000</p>
+                        <p class="text-xs text-gray-600">Per hari</p>
+                    </div>
 
-                <a href="" 
-                   class="mt-6 block bg-emerald-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
-                    Lihat Paket
+                    <ul class="mt-3 space-y-1 text-gray-700 text-sm">
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Tenda Kap 4-5 DL
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            4 Sleeping Bag + Matras
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-4 h-4 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Tas Carrier + RC
+                        </li>
+                    </ul>
+                 </div>
+
+                <a href="#" 
+                    class="mt-4 block bg-emerald-600 text-white text-center py-2.5 rounded-lg font-semibold hover:bg-emerald-700 transition duration-300 text-sm">
+                    Pilih Paket Ini
                 </a>
             </div>
-
         </div>
-    </div>
+        
+        <!-- Main CTA Area for Full List - LINK UPDATED HERE -->
+        <div class="mt-8 text-center pt-6 border-t border-emerald-100">
+            <a href="{{ route('frontend.produk.index', ['category' => 'paket']) }}"
+            class="inline-flex items-center px-6 py-3 bg-emerald-600 text-white text-base font-bold rounded-xl shadow-md shadow-emerald-300 hover:bg-emerald-700 transition duration-300">
+                Lihat Semua 12 Pilihan Paket
+                <svg class="w-4 h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+            <p class="text-xs text-gray-500 mt-3">Atau langsung chat admin untuk detail item.</p>
+        </div>
+
 </section>
 
 
@@ -275,7 +361,7 @@
 
 
     <!-- SECTION HISTORY (LAMA - Tapi dipertahankan, style lekuk) -->
-    <section id="history" class="mt-16 px-6 scroll-mt-20">
+    {{-- <section id="history" class="mt-16 px-6 scroll-mt-20">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <!-- Kiri: Teks History -->
             <div>
@@ -289,14 +375,14 @@
                         Dari sebuah garasi kecil dengan beberapa tenda dan ransel, kami tumbuh bersama komunitas pendaki. Misi kami sederhana: menyediakan akses mudah ke perlengkapan outdoor berkualitas tinggi bagi semua orang, dari pemula hingga petualang berpengalaman.
                     </p>
                 </div>
-            </div>
-
+            </div> --}}
+{{-- 
             <!-- Kanan: Gambar History (Lekuk Custom) -->
             <div class="overflow-hidden shadow-xl rounded-2xl rounded-tr-[6rem] rounded-bl-[6rem] mt-10">
                 <img src="/utama.jpg" alt="Sejarah Jengki Adventure" class="w-full h-80 object-cover transition-transform duration-300 hover:scale-105">
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- SECTION RULES (LAMA - Tapi dipertahankan, style lekuk) -->
     <section id="rules" class="mt-16 bg-gray-50 py-16 px-6 scroll-mt-20">

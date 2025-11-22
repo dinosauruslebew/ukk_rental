@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
+use App\Models\Paket;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -130,4 +131,29 @@ class CartController extends Controller
             return $barang->harga_sewa * $durasi;
         }
     }
+
+    public function addPaket($id)
+{
+    $paket = Paket::with('items')->findOrFail($id);
+
+    // masukkan paket sebagai 1 item di cart
+    $cart = session()->get('cart', []);
+
+    $cart['paket_'.$id] = [
+        'type' => 'paket',
+        'nama' => $paket->nama_paket,
+        'harga' => $paket->harga_paket,
+        'items' => $paket->items->map(function ($i) {
+            return [
+                'nama' => $i->nama_barang,
+                'qty' => $i->pivot->qty
+            ];
+        }),
+    ];
+
+    session()->put('cart', $cart);
+
+    return back()->with('success', 'Paket ditambahkan ke keranjang!');
+}
+
 }

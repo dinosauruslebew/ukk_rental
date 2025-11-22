@@ -39,22 +39,21 @@
             -->
             <div class="mb-10 overflow-x-auto pb-2 no-scrollbar">
             <div class="flex gap-2 md:gap-4 min-w-max">
-
                 <a href="{{ route('frontend.produk.index', ['category' => 'all']) }}"
                 class="px-5 py-2 rounded-full text-sm font-medium border border-gray-400
                 {{ $activeCategory == 'all' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-200' }}">
-                All Products
+                    All Products
                 </a>
 
                 @foreach($kategori as $cat)
                     <a href="{{ route('frontend.produk.index', ['category' => $cat]) }}"
                     class="px-5 py-2 rounded-full text-sm font-medium capitalize border border-gray-400
                     {{ $activeCategory == $cat ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-200' }}">
-                    {{ $cat }}
+                        {{ $cat }}
                     </a>
                 @endforeach
 
-</div>
+                </div>
 
                 </div>
             </div>
@@ -64,6 +63,56 @@
                 PRODUCT GRID (Clean Cards)
                 ========================================
             -->
+
+     @if($activeCategory == 'paket')
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+    @foreach($barang as $item)
+    <div class="bg-[#E9F7EF] border border-[#cdeede] rounded-[2rem] shadow-sm hover:shadow-lg p-6 relative transition">
+
+        <!-- Nama Paket -->
+        <h3 class="text-xl font-extrabold text-gray-900 uppercase mb-1">
+            {{ $item->nama_paket }}
+        </h3>
+
+        <!-- Subtitle kecil -->
+        <p class="text-sm text-gray-600 mb-4">Paket lengkap untuk kebutuhan camping</p>
+
+        <!-- Harga -->
+        <p class="text-3xl font-extrabold text-emerald-600">
+            Rp {{ number_format($item->harga_paket, 0, ',', '.') }}
+        </p>
+        <p class="text-sm text-gray-500 mb-4">Per hari</p>
+
+        <!-- LIST BARANG DALAM PAKET -->
+        <ul class="space-y-1 text-sm text-gray-700 mb-6">
+            @foreach($item->items as $barangPaket)
+            <li class="flex items-start gap-2">
+                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                <span>
+                    {{ $barangPaket->nama_barang }}
+                    @if($barangPaket->pivot->qty > 1)
+                        (x{{ $barangPaket->pivot->qty }})
+                    @endif
+                </span>
+            </li>
+            @endforeach
+        </ul>
+
+        <!-- Tombol CTA -->
+        <a href="{{ route('frontend.paket.detail', $item->id_paket) }}"
+            class="block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3 transition">
+            Pilih Paket Ini
+        </a>
+
+    </div>
+    @endforeach
+
+</div>
+
+
+        @else
+            {{-- Tampilan barang biasa --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @forelse($barang as $item)
                     <!-- Card Wrapper -->
@@ -135,7 +184,7 @@
                     </div>
                 @endforelse
             </div>
-
+            @endif
         </div>
     </div>
 @endsection
