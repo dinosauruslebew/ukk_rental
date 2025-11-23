@@ -6,14 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Barang;
 use Illuminate\Http\Request;
-
-// PASTIKAN TIDAK ADA use App\Http\Controllers\Frontend\OrderController; DI SINI
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
-    /**
-     * Menampilkan halaman daftar semua pesanan (orders)
-     */
     public function index(Request $request)
     {
         $statuses = [
@@ -39,32 +35,22 @@ class OrderController extends Controller
         return view('admin.order.index', compact('orders', 'statuses', 'activeStatus'));
     }
 
-    /**
-     * Menampilkan detail satu pesanan
-     */
     public function show(Order $order)
     {
         $order->load(['items.barang', 'user']);
         return view('admin.order.show', compact('order'));
     }
 
-    /**
-     * Mengupdate status pesanan
-     */
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|string|in:menunggu konfirmasi,dikonfirmasi,disewa,selesai,dibatalkan',
+            'status' => 'required|string|in:dikonfirmasi,disewa,dibatalkan',
         ]);
 
         $newStatus = $request->status;
-        $oldStatus = $order->status; 
 
-        // --- LOGIKA STOK (BARU & LENGKAP!) ---
-
-        // 1. Jika pesanan DIBATALKAN (dan sebelumnya BELUM batal/selesai)
-        if ($newStatus == 'dibatalkan' && !in_array($oldStatus, ['dibatalkan', 'selesai'])) {
-            $order->loadMissing('items.barang'); 
+        // Jika Dibatalkan, kembalikan stok
+        if ($newStatus == 'dibatalkan' && $order->status != 'dibatalkan') {
             foreach ($order->items as $item) {
                 if ($item->barang) {
                     $item->barang->increment('stok', $item->kuantitas);
@@ -72,45 +58,62 @@ class OrderController extends Controller
             }
         }
 
-        // 2. Jika pesanan DISELESAIKAN secara manual (dan sebelumnya BELUM selesai/batal)
-        elseif ($newStatus == 'selesai' && !in_array($oldStatus, ['selesai', 'dibatalkan'])) {
-            $order->loadMissing('items.barang');
-            foreach ($order->items as $item) {
-                if ($item->barang) {
-                    $item->barang->increment('stok', $item->kuantitas);
-                }
-            }
-        }
-
-        // 3. Update status pesanan (order)
         $order->update(['status' => $newStatus]);
 
-        return redirect()->route('admin.order.show', $order->id)->with('success', 'Status pesanan berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui!');
     }
 
     /**
-     * Memproses pengembalian barang dan mengubah status pesanan menjadi 'selesai'.
+     * LOGIKA HITUNG DENDA & PENGEMBALIAN (SINKRON DENGAN DATABASE)
      */
     public function processReturn(Request $request, Order $order)
     {
-        // 1. Validasi status harus 'disewa' untuk diproses pengembalian.
-        if ($order->status !== 'disewa') {
-            return redirect()->route('admin.order.show', $order->id)
-                ->with('error', 'Gagal memproses pengembalian. Pesanan harus dalam status "Disewa".');
-        }
+        $request->validate([
+            'tanggal_kembali_aktual' => 'required|date',
+        ]);
 
-        // 2. Kembalikan stok barang ke inventori
-        $order->loadMissing('items.barang');
+        $tglAktual = Carbon::parse($request->tanggal_kembali_aktual);
+        $totalDenda = 0;
+        $maxHariTelat = 0;
+
+        // 1. Loop barang untuk balikin stok & hitung denda
         foreach ($order->items as $item) {
+            // Kembalikan Stok
             if ($item->barang) {
                 $item->barang->increment('stok', $item->kuantitas);
             }
+
+            // Cek Keterlambatan
+            $tglHarusKembali = Carbon::parse($item->tanggal_kembali);
+
+            if ($tglAktual->gt($tglHarusKembali)) {
+                // Hitung selisih hari
+                $hariTelat = $tglAktual->diffInDays($tglHarusKembali);
+
+                if ($hariTelat > $maxHariTelat) {
+                    $maxHariTelat = $hariTelat;
+                }
+
+                // Rumus Denda: (Harga Harian Barang x Kuantitas) x Hari Telat
+                $hargaPerHariSatuan = $item->harga_paket_saat_checkout / $item->durasi;
+                $dendaItem = ($hargaPerHariSatuan * $item->kuantitas) * $hariTelat;
+
+                $totalDenda += $dendaItem;
+            }
         }
 
-        // 3. Update status pesanan menjadi 'selesai'
-        $order->update(['status' => 'selesai']);
+        // 2. Update Order dengan nama kolom yang BENAR
+        $order->update([
+            'status' => 'selesai',
+            'tanggal_pengembalian_aktual' => $tglAktual, // Sesuai DB
+            'hari_terlambat' => $maxHariTelat,           // Sesuai DB
+            'total_denda' => $totalDenda,                // Sesuai DB
+            'total_akhir' => $order->total_harga_pesanan + $totalDenda, // Sesuai DB
+            'catatan_admin' => $totalDenda > 0
+                ? "Terlambat {$maxHariTelat} hari. Denda: Rp " . number_format($totalDenda, 0, ',', '.')
+                : "Dikembalikan tepat waktu.",
+        ]);
 
-        return redirect()->route('admin.order.show', $order->id)
-            ->with('success', 'Pengembalian barang berhasil diproses! Status pesanan diubah menjadi Selesai dan stok telah dikembalikan.');
+        return redirect()->back()->with('success', 'Barang dikembalikan! ' . ($totalDenda > 0 ? 'Denda tercatat.' : 'Tanpa denda.'));
     }
 }

@@ -50,10 +50,10 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // jalankan seeder rental untuk mengisi data rental
-        $this->call([
-            RentalSeeder::class,
-        ]);
+        // // jalankan seeder rental untuk mengisi data rental
+        // $this->call([
+        //     RentalSeeder::class,
+        // ]);
     }
 }
 

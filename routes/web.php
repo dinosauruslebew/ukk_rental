@@ -15,7 +15,7 @@ use App\Http\Controllers\Auth\RegisterController;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
-    
+
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::post('/register', [RegisterController::class, 'store']);
 });
@@ -47,7 +47,7 @@ use App\Http\Controllers\Frontend\LandingController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\CartController;
 // PENTING: Gunakan Controller Frontend, bukan Admin
-use App\Http\Controllers\Frontend\OrderController; 
+use App\Http\Controllers\Frontend\OrderController;
 
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('frontend.landing');
@@ -63,7 +63,7 @@ Route::prefix('produk')->name('frontend.produk.')->group(function () {
 Route::prefix('paket')->name('frontend.paket.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index'); // Ini adalah rute untuk listing semua paket
     Route::get('/{paket:id_paket}', [ProductController::class, 'showPaket'])
-    ->name('detail');   
+    ->name('detail');
 });
 
 // ==========================
@@ -74,6 +74,8 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{id_barang}', [CartController::class, 'addToCart'])->name('add');
     Route::post('/remove', [CartController::class, 'remove'])->name('remove');
+    Route::post('/cart/add-paket/{id_paket}', [CartController::class, 'addPaket'])->name('addPaket');
+    Route::post('/rental/paket/now/{id_paket}', [CartController::class, 'rentPacketNow'])->name('rental.paket.now');
 });
 
 // Tombol "Sewa Sekarang"
@@ -90,7 +92,7 @@ Route::post('/cart/add-paket/{id_paket}', [CartController::class, 'addPaket'])
 Route::middleware('auth')->group(function () {
 
     // Menampilkan form checkout, menerima ID paket (opsional) dari landing page
-    Route::get('/order/create/{paket_id?}', [OrderController::class, 'create'])->name('order.create'); 
+    Route::get('/order/create/{paket_id?}', [OrderController::class, 'create'])->name('order.create');
 
     // Checkout ke DB
     Route::post('/checkout/store', [OrderController::class, 'store'])->name('checkout.store');
@@ -141,9 +143,7 @@ Route::middleware(['auth', 'role:admin'])
         // Paket
         Route::resource('paket', PaketController::class);
 
-        // admin/orders/{order} sudah ada show; tambahkan route patch untuk proses return
-        // Ubah FQCN menjadi alias AdminOrderController::class
-        Route::patch('/orders/{order}/return', [AdminOrderController::class, 'processReturn'])->name('order.processReturn');
+        Route::patch('orders/{order}/return', [AdminOrderController::class, 'processReturn'])->name('order.processReturn');
 
 
     });

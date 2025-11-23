@@ -13,6 +13,11 @@ class Order extends Model
         'user_id',
         'total_harga_pesanan',
         'status',
+        'metode_pembayaran',
+        'tanggal_pengembalian_aktual', // <-- Penting untuk Denda
+        'hari_terlambat',              // <-- Penting untuk Denda
+        'total_denda',                 // <-- Penting untuk Denda
+        'total_akhir',                 // <-- Penting untuk Denda
         'bukti_pembayaran',
         'catatan_user',
         'catatan_admin',
@@ -20,15 +25,17 @@ class Order extends Model
 
     protected $casts = [
         'total_harga_pesanan' => 'integer',
+        'total_denda' => 'integer',
+        'total_akhir' => 'integer',
+        'hari_terlambat' => 'integer',
+        'tanggal_pengembalian_aktual' => 'date',
     ];
 
-    // Relasi: 1 Order dimiliki 1 User
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi: 1 Order punya BANYAK Item Barang
     public function items()
     {
         return $this->hasMany(OrderItem::class);

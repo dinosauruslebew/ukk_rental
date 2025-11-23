@@ -36,4 +36,10 @@ class Paket extends Model
             'barang_id'       // FK di pivot
         )->withPivot('qty')->withTimestamps();
     }
+
+        public function getTotalQtyAttribute()
+    {
+        // Kita load items jika belum ada, lalu sum kolom pivot 'qty'
+        return $this->items->sum('pivot.qty');
+    }
 }

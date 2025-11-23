@@ -4,7 +4,7 @@
 
     <div class="w-full max-w-7xl mx-auto py-24 px-6">
 
-        <!-- Alert Sukses -->
+        <!-- Alert Sukses/Error Global -->
         @if(session('success'))
             <div class="mb-6 p-4 bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl flex items-center gap-2 animate-fade-in-up">
                 <i class="fa-solid fa-circle-check"></i>
@@ -15,6 +15,17 @@
             <div class="mb-6 p-4 bg-red-100 border border-red-200 text-red-700 rounded-xl flex items-center gap-2 animate-fade-in-up">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 {{ session('error') }}
+            </div>
+        @endif
+
+        <!-- Tampilkan Error Validasi Global (Jaga-jaga) -->
+        @if ($errors->any())
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -53,7 +64,7 @@
 
                     <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{{ $barang->nama_barang }}</h1>
 
-                    <!-- Harga Utama (Dinamis via JS) -->
+                    <!-- Harga Utama -->
                     <div class="flex items-center gap-4 mb-6">
                          <p class="text-3xl text-emerald-600 font-bold" id="displayPrice">
                             Rp{{ number_format($barang->harga_sewa, 0, ',', '.') }}
@@ -68,6 +79,7 @@
                     </div>
 
                     <!-- FORM PEMESANAN -->
+                    <!-- Default action kita set ke 'cart.add' -->
                     <form action="{{ route('cart.add', $barang->id_barang) }}" method="POST" id="orderForm">
                         @csrf
 
@@ -78,9 +90,7 @@
                                 <!-- Opsi 1 Malam -->
                                 <label class="cursor-pointer flex-1">
                                     <input type="radio" name="durasi" value="1" class="peer hidden" checked onchange="updatePrice()">
-                                    <div class="text-center py-2 rounded-xl border border-gray-200 
-                                                bg-white text-gray-600 peer-checked:bg-emerald-600
-                                                peer-checked:text-white peer-checked:border-emerald-600 transition hover:border-emerald-400 shadow-sm">
+                                    <div class="text-center py-2 rounded-xl border border-gray-200 bg-white text-gray-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition hover:border-emerald-400 shadow-sm">
                                         <span class="block text-sm font-bold">1 Malam</span>
                                         <span class="text-[10px]">Rp{{ number_format($barang->harga_sewa/1000, 0) }}k</span>
                                     </div>
@@ -88,62 +98,33 @@
 
                                 <!-- Opsi 2 Malam -->
                                 <label class="cursor-pointer flex-1 {{ !$barang->harga_2_malam ? 'opacity-50 cursor-not-allowed' : '' }}">
-                                    <input type="radio"
-                                        name="durasi"
-                                        value="2"
-                                        class="peer hidden"
-                                        onchange="updatePrice()"
-                                        {{ !$barang->harga_2_malam ? 'disabled' : '' }}>
-                                    
-                                    <div class="text-center py-2 rounded-xl border border-gray-200
-                                                bg-white text-gray-600 
-                                                peer-checked:bg-emerald-600 peer-checked:text-white
-                                                peer-checked:border-emerald-600 transition
-                                                {{ $barang->harga_2_malam ? 'hover:border-emerald-400' : 'bg-gray-100 border-gray-300' }}
-                                                shadow-sm">
+                                    <input type="radio" name="durasi" value="2" class="peer hidden" onchange="updatePrice()" {{ !$barang->harga_2_malam ? 'disabled' : '' }}>
+                                    <div class="text-center py-2 rounded-xl border border-gray-200 bg-white text-gray-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition {{ $barang->harga_2_malam ? 'hover:border-emerald-400' : 'bg-gray-50' }} shadow-sm">
                                         <span class="block text-sm font-bold">2 Malam</span>
                                         <span class="text-[10px]">
-                                            @if($barang->harga_2_malam)
-                                                Rp{{ number_format($barang->harga_2_malam / 1000, 0) }}k
-                                            @else
-                                                <span class="text-gray-400">N/A</span>
-                                            @endif
+                                            @if($barang->harga_2_malam) Rp{{ number_format($barang->harga_2_malam/1000, 0) }}k
+                                            @else <span class="text-gray-400">N/A</span> @endif
                                         </span>
                                     </div>
                                 </label>
 
                                 <!-- Opsi 3 Malam -->
                                 <label class="cursor-pointer flex-1 {{ !$barang->harga_3_malam ? 'opacity-50 cursor-not-allowed' : '' }}">
-                                    <input type="radio"
-                                        name="durasi"
-                                        value="3"
-                                        class="peer hidden"
-                                        onchange="updatePrice()"
-                                        {{ !$barang->harga_3_malam ? 'disabled' : '' }}>
-                                    
-                                    <div class="text-center py-2 rounded-xl border border-gray-200
-                                                bg-white text-gray-600 
-                                                peer-checked:bg-emerald-600 peer-checked:text-white
-                                                peer-checked:border-emerald-600 transition
-                                                {{ $barang->harga_3_malam ? 'hover:border-emerald-400' : 'bg-gray-100 border-gray-300' }}
-                                                shadow-sm">
+                                    <input type="radio" name="durasi" value="3" class="peer hidden" onchange="updatePrice()" {{ !$barang->harga_3_malam ? 'disabled' : '' }}>
+                                    <div class="text-center py-2 rounded-xl border border-gray-200 bg-white text-gray-600 peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600 transition {{ $barang->harga_3_malam ? 'hover:border-emerald-400' : 'bg-gray-50' }} shadow-sm">
                                         <span class="block text-sm font-bold">3 Malam</span>
                                         <span class="text-[10px]">
-                                            @if($barang->harga_3_malam)
-                                                Rp{{ number_format($barang->harga_3_malam / 1000, 0) }}k
-                                            @else
-                                                <span class="text-gray-400">N/A</span>
-                                            @endif
+                                            @if($barang->harga_3_malam) Rp{{ number_format($barang->harga_3_malam/1000, 0) }}k
+                                            @else <span class="text-gray-400">N/A</span> @endif
                                         </span>
                                     </div>
                                 </label>
-
                             </div>
                         </div>
 
                         <!-- Kuantitas & Tanggal Mulai -->
                         <div class="grid grid-cols-2 gap-4 mb-8">
-                            <!-- Input Kuantitas [ - ] 1 [ + ] -->
+                            <!-- Input Kuantitas -->
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Kuantitas</label>
                                 <div class="flex items-center border border-gray-200 rounded-xl shadow-sm bg-gray-50">
@@ -158,7 +139,12 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tanggal Mulai</label>
                                 <input type="date" name="tanggal_mulai" required
+                                       value="{{ old('tanggal_mulai') }}"
                                        class="w-full border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm py-3 px-4 bg-gray-50 h-10">
+                                <!-- TAMPILKAN ERROR TANGGAL DI SINI -->
+                                @error('tanggal_mulai')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -190,35 +176,24 @@
         </div>
     </div>
 
-    <!-- Javascript untuk Update Harga Real-time -->
+    <!-- Javascript -->
     <script>
-        // Data Harga dari Database ke JS
         const prices = {
             1: {{ $barang->harga_sewa }},
-            2: {{ $barang->harga_2_malam ?? ($barang->harga_sewa * 2) }}, // Fallback kalau null
-            3: {{ $barang->harga_3_malam ?? ($barang->harga_sewa * 3) }}  // Fallback kalau null
+            2: {{ $barang->harga_2_malam ?? ($barang->harga_sewa * 2) }},
+            3: {{ $barang->harga_3_malam ?? ($barang->harga_sewa * 3) }}
         };
         const maxStok = {{ $barang->stok }};
 
         function updatePrice() {
-            // 1. Ambil nilai durasi & kuantitas
             const durasi = document.querySelector('input[name="durasi"]:checked').value;
             const kuantitas = parseInt(document.getElementById('kuantitas').value);
-
-            // 2. Ambil harga paket satuan
             let hargaPaketSatuan = prices[durasi];
-
-            // 3. Hitung Total
             const total = hargaPaketSatuan * kuantitas;
-
-            // 4. Format ke Rupiah
             const formattedTotal = new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
+                style: 'currency', currency: 'IDR', minimumFractionDigits: 0
             }).format(total);
 
-            // 5. Update tampilan
             document.getElementById('displayPrice').innerText = formattedTotal;
             document.getElementById('priceLabel').innerText = '/ ' + durasi + ' Malam / ' + kuantitas + ' unit';
         }
@@ -227,14 +202,9 @@
             const qtyInput = document.getElementById('kuantitas');
             let currentQty = parseInt(qtyInput.value);
             let newQty = currentQty + amount;
-
-            // Batasi min 1 dan max stok
             if (newQty < 1) newQty = 1;
             if (newQty > maxStok) newQty = maxStok;
-
             qtyInput.value = newQty;
-
-            // Update harga total setelah kuantitas berubah
             updatePrice();
         }
 
@@ -243,14 +213,20 @@
             if (type === 'cart') {
                 form.action = "{{ route('cart.add', $barang->id_barang) }}";
             } else {
+                // PERBAIKAN: Pastikan nama route sesuai web.php ('cart.rental.now')
                 form.action = "{{ route('cart.rental.now', $barang->id_barang) }}";
             }
         }
 
         // Set min date to today
-        document.querySelector('input[name="tanggal_mulai"]').min = new Date().toISOString().split("T")[0];
+        const today = new Date().toISOString().split("T")[0];
+        document.querySelector('input[name="tanggal_mulai"]').min = today;
 
-        // Panggil sekali pas load biar harganya ke-set
+        // Optional: Set default value ke hari ini jika belum diisi
+        if (!document.querySelector('input[name="tanggal_mulai"]').value) {
+             document.querySelector('input[name="tanggal_mulai"]').value = today;
+        }
+
         updatePrice();
     </script>
 

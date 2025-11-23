@@ -35,11 +35,10 @@
                         <td class="py-4 px-6 font-semibold text-gray-800">{{ $p->nama_paket }}</td>
                         <td class="py-4 px-6 text-gray-600">Rp{{ number_format($p->harga_paket, 0, ',', '.') }}</td>
                         <td class="py-4 px-6 text-gray-600">
-                            {{-- PERBAIKAN DI SINI: Menggunakan items_count --}}
-                            <span class="font-medium text-teal-600">{{ $p->items_count }}</span> Barang
+                            <span class="font-medium text-teal-600">{{ $p->total_qty }}</span> Pcs
                         </td>
                         <td class="py-4 px-6 flex gap-3 items-center">
-                            <a href="{{ route('admin.paket.edit', $p->id_paket) }}" 
+                            <a href="{{ route('admin.paket.edit', $p->id_paket) }}"
                                 class="text-blue-600 hover:text-blue-800 font-medium transition duration-150">
                                 Edit
                             </a>

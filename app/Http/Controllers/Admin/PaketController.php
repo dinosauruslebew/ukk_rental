@@ -12,14 +12,11 @@ class PaketController extends Controller
 {
     public function index()
     {
-        // PERBAIKAN DI SINI:
-        // Menggunakan withCount('items') untuk menghitung jumlah item 
-        // yang terkait dengan setiap paket. Laravel akan menambahkan kolom 'items_count'.
-        $paket = Paket::withCount('items')->latest()->get(); 
+
+        $paket = Paket::with('items')->latest()->get();
         
         return view('admin.paket.index', compact('paket'));
     }
-
     public function create()
     {
         $barang = Barang::orderBy('nama_barang')->get();
@@ -53,7 +50,6 @@ class PaketController extends Controller
             $qty = $validated['qty'][$barangId] ?? 1;
 
             if ($qty > 0) {
-                // Relasi yang digunakan adalah items()
                 $paket->items()->attach($barangId, ['qty' => $qty]);
             }
         }

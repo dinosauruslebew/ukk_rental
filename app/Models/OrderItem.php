@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Order;
-
 
 class OrderItem extends Model
 {
@@ -14,6 +12,7 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'barang_id',
+        'paket_id', 
         'kuantitas',
         'durasi',
         'tanggal_sewa',
@@ -26,21 +25,13 @@ class OrderItem extends Model
     protected $casts = [
         'kuantitas' => 'integer',
         'durasi' => 'integer',
-        'harga_paket_saat_checkout' => 'integer',
         'subtotal' => 'integer',
         'tanggal_sewa' => 'date',
         'tanggal_kembali' => 'date',
     ];
 
-    // Relasi: 1 Item milik 1 Order
-    public function order()
-    {
-        return $this->belongsTo(Order::class);
-    }
-
-    // Relasi: 1 Item merujuk ke 1 Barang
-    public function barang()
-    {
-        return $this->belongsTo(Barang::class, 'barang_id', 'id_barang');
-    }
+    public function order() { return $this->belongsTo(Order::class); }
+    public function barang() { return $this->belongsTo(Barang::class, 'barang_id', 'id_barang'); }
+    // Relasi Paket (Opsional jika ingin ambil detail paket nanti)
+    public function paket() { return $this->belongsTo(Paket::class, 'paket_id', 'id_paket'); }
 }
