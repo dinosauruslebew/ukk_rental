@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 
+// PASTIKAN TIDAK ADA use App\Http\Controllers\Frontend\OrderController; DI SINI
+
 class OrderController extends Controller
 {
     /**
@@ -52,19 +54,16 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            // Tambahkan 'menunggu konfirmasi' dan status lain yang mungkin diubah manual
             'status' => 'required|string|in:menunggu konfirmasi,dikonfirmasi,disewa,selesai,dibatalkan',
         ]);
 
         $newStatus = $request->status;
-        $oldStatus = $order->status; // Simpan status lama
+        $oldStatus = $order->status; 
 
         // --- LOGIKA STOK (BARU & LENGKAP!) ---
 
         // 1. Jika pesanan DIBATALKAN (dan sebelumnya BELUM batal/selesai)
-        // (Stok dikunci/disewa, Balikin!)
         if ($newStatus == 'dibatalkan' && !in_array($oldStatus, ['dibatalkan', 'selesai'])) {
-            // Perlu memuat relasi items jika belum dimuat, tapi di sini diasumsikan sudah ada dari model Order/relasi
             $order->loadMissing('items.barang'); 
             foreach ($order->items as $item) {
                 if ($item->barang) {
@@ -73,8 +72,7 @@ class OrderController extends Controller
             }
         }
 
-        // 2. Jika pesanan DISELESAIKAN secara manual melalui updateStatus (dan sebelumnya BELUM selesai/batal)
-        // (Barang udah kembali -> Balikin!)
+        // 2. Jika pesanan DISELESAIKAN secara manual (dan sebelumnya BELUM selesai/batal)
         elseif ($newStatus == 'selesai' && !in_array($oldStatus, ['selesai', 'dibatalkan'])) {
             $order->loadMissing('items.barang');
             foreach ($order->items as $item) {
@@ -92,7 +90,6 @@ class OrderController extends Controller
 
     /**
      * Memproses pengembalian barang dan mengubah status pesanan menjadi 'selesai'.
-     * Endpoint khusus ini dipicu oleh route 'admin.order.processReturn'.
      */
     public function processReturn(Request $request, Order $order)
     {
@@ -106,7 +103,6 @@ class OrderController extends Controller
         $order->loadMissing('items.barang');
         foreach ($order->items as $item) {
             if ($item->barang) {
-                // Mengembalikan stok berdasarkan kuantitas yang disewa
                 $item->barang->increment('stok', $item->kuantitas);
             }
         }

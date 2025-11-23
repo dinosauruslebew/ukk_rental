@@ -28,12 +28,15 @@ Route::post('/logout', function (Request $request) {
     return redirect('/');
 })->name('logout')->middleware('auth');
 
-//edit profil
+// Edit Profil Umum
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-});
 
+    // === RENTAL DATA PROFILE (BARU) ===
+    Route::get('/rental-profile', [\App\Http\Controllers\ProfileController::class, 'editRentalData'])->name('profile.rental.edit');
+    Route::post('/rental-profile', [\App\Http\Controllers\ProfileController::class, 'updateRentalData'])->name('profile.rental.update');
+});
 
 
 // ======================================
@@ -43,7 +46,8 @@ Route::middleware(['auth'])->group(function () {
 use App\Http\Controllers\Frontend\LandingController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\CartController;
-use App\Http\Controllers\Frontend\OrderController;
+// PENTING: Gunakan Controller Frontend, bukan Admin
+use App\Http\Controllers\Frontend\OrderController; 
 
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('frontend.landing');
@@ -51,14 +55,16 @@ Route::get('/', [LandingController::class, 'index'])->name('frontend.landing');
 // Produk
 Route::prefix('produk')->name('frontend.produk.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/{barang:id_barang}', [ProductController::class, 'show'])->name('detail');
+    Route::get('/{barang:id_barang}', [ProductController::class, 'showBarang'])
+    ->name('detail');
 });
 
-        // Paket
-        Route::prefix('paket')->name('frontend.paket.')->group(function () {
-            Route::get('/', [ProductController::class, 'index'])->name('index');
-            Route::get('/{paket:id_paket}', [ProductController::class, 'show'])->name('detail');
-        });
+// Paket
+Route::prefix('paket')->name('frontend.paket.')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('index'); // Ini adalah rute untuk listing semua paket
+    Route::get('/{paket:id_paket}', [ProductController::class, 'showPaket'])
+    ->name('detail');   
+});
 
 // ==========================
 // ========== CART ==========
@@ -72,7 +78,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
 
 // Tombol "Sewa Sekarang"
 Route::post('/rental/now/{id_barang}', [CartController::class, 'rentNow'])
-     ->name('cart.rental.now');
+    ->name('cart.rental.now');
 
 Route::post('/cart/add-paket/{id_paket}', [CartController::class, 'addPaket'])
     ->name('cart.addPaket');
@@ -82,6 +88,9 @@ Route::post('/cart/add-paket/{id_paket}', [CartController::class, 'addPaket'])
 // ============================================
 
 Route::middleware('auth')->group(function () {
+
+    // Menampilkan form checkout, menerima ID paket (opsional) dari landing page
+    Route::get('/order/create/{paket_id?}', [OrderController::class, 'create'])->name('order.create'); 
 
     // Checkout ke DB
     Route::post('/checkout/store', [OrderController::class, 'store'])->name('checkout.store');
@@ -107,7 +116,7 @@ Route::middleware('auth')->group(function () {
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BarangController;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController; // <-- Alias digunakan di sini
 use App\Http\Controllers\Admin\PaketController;
 
 Route::middleware(['auth', 'role:admin'])
@@ -123,6 +132,7 @@ Route::middleware(['auth', 'role:admin'])
 
         // Orders
         Route::prefix('orders')->name('order.')->group(function () {
+            // Gunakan alias AdminOrderController
             Route::get('/', [AdminOrderController::class, 'index'])->name('index');
             Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
             Route::patch('/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('updateStatus');
@@ -132,7 +142,8 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('paket', PaketController::class);
 
         // admin/orders/{order} sudah ada show; tambahkan route patch untuk proses return
-        Route::patch('/orders/{order}/return', [\App\Http\Controllers\Admin\OrderController::class, 'processReturn'])->name('admin.order.processReturn');
+        // Ubah FQCN menjadi alias AdminOrderController::class
+        Route::patch('/orders/{order}/return', [AdminOrderController::class, 'processReturn'])->name('order.processReturn');
 
 
     });

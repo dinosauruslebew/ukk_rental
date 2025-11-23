@@ -34,7 +34,6 @@
             <!--
                 ========================================
                 CATEGORY TABS (Pills Navigation)
-                Style persis referensi: Aktif = Hitam, Non-Aktif = Teks Abu
                 ========================================
             -->
             <div class="mb-10 overflow-x-auto pb-2 no-scrollbar">
@@ -59,49 +58,63 @@
             </div>
 
             <!--
-                ========================================
-                PRODUCT GRID (Clean Cards)
-                ========================================
-            -->
+========================================
+PRODUCT GRID
+========================================
+-->
 
-     @if($activeCategory == 'paket')
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+@if($activeCategory == 'paket')
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
 
     @foreach($barang as $item)
-    <div class="bg-[#E9F7EF] border border-[#cdeede] rounded-[2rem] shadow-sm hover:shadow-lg p-6 relative transition">
+    {{-- PERBAIKAN: Menambahkan min-h-[400px] agar card tidak terlalu lonjong/tinggi --}}
+    <div class="bg-white border border-emerald-100 rounded-3xl shadow-lg hover:shadow-xl p-6 relative transition flex flex-col justify-between h-full min-h-[300px]">
 
-        <!-- Nama Paket -->
-        <h3 class="text-xl font-extrabold text-gray-900 uppercase mb-1">
-            {{ $item->nama_paket }}
-        </h3>
+        <div class="flex-grow">
+            <!-- Nama Paket -->
+            <h3 class="text-xl font-extrabold text-gray-900 uppercase mb-1 leading-snug">
+                {{ $item->nama_paket }}
+            </h3>
 
-        <!-- Subtitle kecil -->
-        <p class="text-sm text-gray-600 mb-4">Paket lengkap untuk kebutuhan camping</p>
+            <!-- Harga -->
+            <p class="text-3xl font-extrabold text-emerald-600 mt-2">
+                Rp {{ number_format($item->harga_paket, 0, ',', '.') }}
+            </p>
+            <p class="text-sm text-gray-500 mb-4">Per hari</p>
 
-        <!-- Harga -->
-        <p class="text-3xl font-extrabold text-emerald-600">
-            Rp {{ number_format($item->harga_paket, 0, ',', '.') }}
-        </p>
-        <p class="text-sm text-gray-500 mb-4">Per hari</p>
-
-        <!-- LIST BARANG DALAM PAKET -->
-        <ul class="space-y-1 text-sm text-gray-700 mb-6">
-            @foreach($item->items as $barangPaket)
-            <li class="flex items-start gap-2">
-                <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
-                <span>
-                    {{ $barangPaket->nama_barang }}
-                    @if($barangPaket->pivot->qty > 1)
-                        (x{{ $barangPaket->pivot->qty }})
+            <!-- LIST BARANG DALAM PAKET -->
+            <div class="mb-6 pt-4 border-t border-gray-100">
+                <p class="text-sm font-semibold text-gray-700 mb-2">Termasuk:</p>
+                
+                <ul class="space-y-1 text-sm text-gray-700">
+                    @php $totalItems = count($item->items); @endphp
+                    
+                    {{-- Loop hanya untuk 3 item pertama --}}
+                    @foreach($item->items->take(3) as $barangPaket)
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-600 mt-1"></i>
+                        <span>
+                            {{ $barangPaket->nama_barang }}
+                            @if($barangPaket->pivot->qty > 1)
+                                (x{{ $barangPaket->pivot->qty }})
+                            @endif
+                        </span>
+                    </li>
+                    @endforeach
+                    
+                    {{-- Tambahan untuk item yang disembunyikan --}}
+                    @if ($totalItems > 3)
+                        <li class="text-xs text-gray-500 italic mt-2">
+                            + {{ $totalItems - 3 }} item lainnya...
+                        </li>
                     @endif
-                </span>
-            </li>
-            @endforeach
-        </ul>
+                </ul>
+            </div>
+        </div>
 
-        <!-- Tombol CTA -->
+        <!-- Tombol CTA (Ditempatkan di bagian bawah karena flex-col justify-between) -->
         <a href="{{ route('frontend.paket.detail', $item->id_paket) }}"
-            class="block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3 transition">
+            class="mt-auto block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3 transition shadow-md">
             Pilih Paket Ini
         </a>
 
@@ -110,80 +123,79 @@
 
 </div>
 
+            @else
+                {{-- Tampilan barang biasa --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    @forelse($barang as $item)
+                        <!-- Card Wrapper -->
+                        <div class="bg-white p-4 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 group relative">
 
-        @else
-            {{-- Tampilan barang biasa --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @forelse($barang as $item)
-                    <!-- Card Wrapper -->
-                    <div class="bg-white p-4 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 group relative">
-
-                        <!-- Gambar Produk -->
-                        <div class="relative bg-gray-100 rounded-[1.5rem] overflow-hidden aspect-square mb-4 {{ $item->stok == 0 ? 'opacity-50 grayscale' : '' }}">
-                             <!-- Link Full Cover ke Detail -->
-                            @if($item->stok > 0)
-                                <a href="{{ route('frontend.produk.detail', $item) }}" class="absolute inset-0 z-10"></a>
-                            @endif
-
-                            <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_barang }}"
-                                 class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
-                                 @if($item->stok == 0)
-                                    <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                                        Stok Habis
-                                    </div>
+                            <!-- Gambar Produk -->
+                            <div class="relative bg-gray-100 rounded-[1.5rem] overflow-hidden aspect-square mb-4 {{ $item->stok == 0 ? 'opacity-50 grayscale' : '' }}">
+                                 <!-- Link Full Cover ke Detail -->
+                                @if($item->stok > 0)
+                                    <a href="{{ route('frontend.produk.detail', $item) }}" class="absolute inset-0 z-10"></a>
                                 @endif
 
-                            <!-- Tombol Panah Kecil (Hiasan/Link ke Detail) -->
-                            <div class="absolute bottom-3 right-3 bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm z-20 pointer-events-none group-hover:bg-gray-900 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-arrow-right -rotate-45 text-xs"></i>
-                            </div>
-                        </div>
+                                <img src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama_barang }}"
+                                        class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                                    @if($item->stok == 0)
+                                        <div class="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                            Stok Habis
+                                        </div>
+                                    @endif
 
-                        <!-- Info Produk -->
-                        <div class="px-1">
-                            <a href="{{ route('frontend.produk.detail', $item) }}">
-                                <h3 class="font-bold text-gray-900 text-lg truncate hover:text-emerald-600 transition">
-                                    {{ $item->nama_barang }}
-                                </h3>
-                            </a>
-
-                            <!-- Harga & Stok -->
-                            <div class="flex justify-between items-end mt-2">
-                                <div>
-                                    <p class="text-gray-900 font-semibold">
-                                        Rp{{ number_format($item->harga_sewa, 0, ',', '.') }}
-                                    </p>
-                                    <p class="text-xs text-gray-400 mt-0.5">/hari</p>
+                                <!-- Tombol Panah Kecil (Hiasan/Link ke Detail) -->
+                                <div class="absolute bottom-3 right-3 bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm z-20 pointer-events-none group-hover:bg-gray-900 group-hover:text-white transition-colors">
+                                    <i class="fa-solid fa-arrow-right -rotate-45 text-xs"></i>
                                 </div>
+                            </div>
 
-                                <div class="text-right">
-                                    <p class="text-xs text-gray-500">
-                                        Stok: <span class="font-medium text-gray-900">{{ $item->stok }}</span>
-                                    </p>
-                                    <!-- Status Dot -->
-                                    <div class="flex items-center justify-end gap-1 mt-1">
-                                        <span class="w-2 h-2 rounded-full {{ $item->status == 'tersedia' ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
-                                        <span class="text-[10px] text-gray-400 uppercase">{{ $item->status == 'tersedia' ? 'Ready' : 'Out' }}</span>
+                            <!-- Info Produk -->
+                            <div class="px-1">
+                                <a href="{{ route('frontend.produk.detail', $item) }}">
+                                    <h3 class="font-bold text-gray-900 text-lg truncate hover:text-emerald-600 transition">
+                                        {{ $item->nama_barang }}
+                                    </h3>
+                                </a>
+
+                                <!-- Harga & Stok -->
+                                <div class="flex justify-between items-end mt-2">
+                                    <div>
+                                        <p class="text-gray-900 font-semibold">
+                                            Rp{{ number_format($item->harga_sewa, 0, ',', '.') }}
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-0.5">/hari</p>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <p class="text-xs text-gray-500">
+                                            Stok: <span class="font-medium text-gray-900">{{ $item->stok }}</span>
+                                        </p>
+                                        <!-- Status Dot -->
+                                        <div class="flex items-center justify-end gap-1 mt-1">
+                                            <span class="w-2 h-2 rounded-full {{ $item->status == 'tersedia' ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
+                                            <span class="text-[10px] text-gray-400 uppercase">{{ $item->status == 'tersedia' ? 'Ready' : 'Out' }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                    </div>
-                @empty
-                    <!-- Tampilan Kosong -->
-                    <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
-                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fa-solid fa-box-open text-3xl text-gray-400"></i>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Produk tidak ditemukan</h3>
-                        <p class="text-gray-500 mt-1">Coba pilih kategori lain.</p>
-                        <a href="{{ route('frontend.produk.index') }}" class="mt-4 text-sm font-medium text-gray-900 underline hover:text-emerald-600">
-                            Reset Filter
-                        </a>
-                    </div>
-                @endforelse
-            </div>
+                    @empty
+                        <!-- Tampilan Kosong -->
+                        <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-box-open text-3xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900">Produk tidak ditemukan</h3>
+                            <p class="text-gray-500 mt-1">Coba pilih kategori lain.</p>
+                            <a href="{{ route('frontend.produk.index') }}" class="mt-4 text-sm font-medium text-gray-900 underline hover:text-emerald-600">
+                                Reset Filter
+                            </a>
+                        </div>
+                    @endforelse
+                </div>
             @endif
         </div>
     </div>

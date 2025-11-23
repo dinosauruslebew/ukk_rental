@@ -194,10 +194,9 @@
             <div>
                 <h4 class="font-semibold text-white text-lg mb-3">Tautan Cepat</h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="#home" class="hover:text-emerald-400 transition">Home</a></li>
-                    <li><a href="#categories" class="hover:text-emerald-400 transition">Kategori</a></li>
-                    <li><a href="#products" class="hover:text-emerald-400 transition">Produk</a></li>
-                    <li><a href="#promo" class="hover:text-emerald-400 transition">Promo</a></li>
+                    <li><a href="/#home" class="hover:text-emerald-400 transition">Home</a></li>
+                    <li><a href="/#categories" class="hover:text-emerald-400 transition">Kategori</a></li>
+                    <li><a href="/#products" class="hover:text-emerald-400 transition">Produk</a></li>
                 </ul>
             </div>
             <div>

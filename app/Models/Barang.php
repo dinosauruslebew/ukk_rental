@@ -9,7 +9,7 @@ class Barang extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_barang';
+    protected $primaryKey = 'id_barang'; 
     public $incrementing = true;
     protected $keyType = 'int';
 
@@ -28,8 +28,7 @@ class Barang extends Model
     public function getRouteKeyName()
     {
         return 'id_barang';
-    }
-
+    }   
     protected static function booted()
     {
         static::saving(function ($barang) {

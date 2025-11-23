@@ -19,6 +19,14 @@ class Paket extends Model
         'gambar',
     ];
 
+    /**
+     * Tentukan kolom yang akan digunakan untuk Route Model Binding di URL.
+     */
+    public function getRouteKeyName()
+    {
+        return 'id_paket';
+    }
+
     public function items()
     {
         return $this->belongsToMany(

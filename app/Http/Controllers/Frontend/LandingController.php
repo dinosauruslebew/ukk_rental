@@ -28,6 +28,7 @@ class LandingController extends Controller
         // Ambil data paket beserta itemnya
         $pakets = Paket::with(['items'])
                         ->orderBy('harga_paket', 'asc')
+                        ->take(3)
                         ->get();
 
         // Kirim data barang dan paket ke view 'frontend.landing'
